@@ -7,6 +7,13 @@ public class Equilibrio {
 	public static int MIN_POTENZA = -5;
 	public static int MAX_POTENZA = 5;
 
+	//costanti utili nel toString
+	public static int LUNGHEZZA_NOMI_ELEMENTI = 5;
+	public static String DIVISORE_ORIZZONTALE = "-------------------------------------";
+	public static String DIVISORE_VERTICALE = "|";
+	public static String A_CAPO = "\n";
+	public static String CINQUE_SPAZZI = "     ";
+	
 	//tabella che contiene le potenze degli elementi, 
 	//la string esterna rappresenta gli elementi sulla x,
 	//la string interna rappresenta gli elementi sulla y,
@@ -115,14 +122,31 @@ public class Equilibrio {
 	}
 
 	public String toString() {
-		StringBuffer tabella = new StringBuffer();
+		StringBuffer tabella = new StringBuffer(CINQUE_SPAZZI);
 
-		int lunghezzaNomePiuLungo = 0;
-		for(String nome: equilibrio.keySet())
-			if(nome.length() > lunghezzaNomePiuLungo)
-				lunghezzaNomePiuLungo = nome.length();
-
-		//aggiungo i nomi degli elementi sulla prima linea
+		tabella.append(DIVISORE_VERTICALE);
+		
+		//scrittura prima riga con i nomi degli elementi
+		for(String elemento: equilibrio.keySet()) {
+			tabella.append(elemento);
+			tabella.append(DIVISORE_VERTICALE);
+		}
+		
+		tabella.append(A_CAPO);
+		tabella.append(DIVISORE_ORIZZONTALE);
+		
+		for(String elementoEsterno: equilibrio.keySet()) {
+			//scrittura dei nomi sulla prima colonna
+			tabella.append(elementoEsterno);
+			tabella.append(DIVISORE_VERTICALE);
+			for(String elementoInterno: equilibrio.keySet()) {
+				//scrittura della potenza
+				tabella.append(equilibrio.get(elementoEsterno).get(elementoInterno));
+				tabella.append(DIVISORE_VERTICALE);
+			}
+			tabella.append(A_CAPO);
+			tabella.append(DIVISORE_ORIZZONTALE);
+		}
 
 		return tabella.toString();
 	}
