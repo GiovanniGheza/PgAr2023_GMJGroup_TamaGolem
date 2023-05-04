@@ -4,57 +4,72 @@ import java.util.*;
 
 public class Equilibrio {
 
-	public static int MIN_POTENZA = -5;
-	public static int MAX_POTENZA = 5;
+	public static int MAX_POTENZA_ESTRAIBILE = 7;
 
 	//costanti utili nel toString
-	public static int LUNGHEZZA_NOMI_ELEMENTI = 5;
-	public static String DIVISORE_ORIZZONTALE = "-------------------------------------";
+	public static String INFO_LETTURA_TABELLA 
+				= "Nella Tabella sono rapresentate le potenze esercitate dagli elementi sulla verticale "
+				+ "sugli elementi dell'orizzontale";
+	public static String DIVISORE_ORIZZONTALE = "------------------------------------------";
 	public static String DIVISORE_VERTICALE = "|";
 	public static String A_CAPO = "\n";
-	public static String CINQUE_SPAZZI = "     ";
+	public static String SPAZIO = " ";
+	public static String FORMAT_DELLA_STRING = "%6s";
 	
-	//tabella che contiene le potenze degli elementi, 
-	//la string esterna rappresenta gli elementi sulla x,
-	//la string interna rappresenta gli elementi sulla y,
-	//in altre parole la mappa interna rappresenta le colonne della tabella
+	//tabella che contiene le potenze degli elementi,
+	//la mappa interna rappresenta le righe della tabella
+	//la prima stringa da sinistra indica in che riga sono
+	//la seconda stringa indica invece la colonna
 	private Map<String, Map<String, Integer>> equilibrio = new HashMap<>();
+	private String[] chiaviDiEquilibrio;
 	private int numeroElementi, numeroPotenzePerElemento;
 
 	Equilibrio(String elementi[]){
-		//generazione colonna
+		//generazione riga
 		Map<String, Integer> colonnaEquilibrio = new HashMap<>();
 		for(String elemento: elementi) {
 			//inizialmente mette tutte le potenze a zero
 			colonnaEquilibrio.put(elemento, 0);
 		}
 
-		//riempimento righe
+		//riempimento colonne
 		for(String elemento: elementi) {
-			equilibrio.put(elemento, colonnaEquilibrio);
+			equilibrio.put(elemento, new HashMap<>(colonnaEquilibrio));
 		}
 
+		chiaviDiEquilibrio = elementi;
 		numeroElementi = equilibrio.size();
 		numeroPotenzePerElemento = numeroElementi - 1;
 	}
+	
+	public void resetEquilibrio() {
+		Set<String> keySetDiEquilibrio = equilibrio.keySet();
+		String[] keyDiEquilibrio = keySetDiEquilibrio.toArray(new String[0]);
+		String[] keyDiEquilibrioInterno = keyDiEquilibrio;
+		
+		for(String elementoEsterno: keyDiEquilibrio) {
+			for(String elementoInterno: keyDiEquilibrioInterno) {
+				equilibrio.get(elementoEsterno).put(elementoInterno, 0);
+			}
+		}
+	}
 
 	public void generaEquilibrio() {
-
-		for(String elementoEsterno: equilibrio.keySet()) {
-
-			//avro bisogno di modificare il range da cui posso estrarre la potenza,
-			//quindi prendo le costanti per il range e le conservo in due variabili
-			int minPotenza = MIN_POTENZA;
-			int maxPotenza = MAX_POTENZA;
-
+		
+		//resetto a zero l'equilibrio
+		resetEquilibrio();
+		
+		for(String elementoEsterno: chiaviDiEquilibrio) {
 			//quante potenze devo ancora estrarre
-			//serve per impedire che due potenze venga estratta subito ai massimi
-			//lasciando così le altre a 0
-			//Es:	range: (-5,5)
-			//		potenze: (5,-5,0,0) <- la somma delle potenze è zero ma ho delle potenze tra elementi diversi a zero
+			//serve per controlli dopo
 			int numeroPotenzeAncoraDaEstrarre = numeroPotenzePerElemento;
+			
+			int sommaPotenze = 0;
 
-			for(String elementoInterno: equilibrio.keySet()) {
+			//visto che le chiavi sono identiche sia fuori che dentro, posso coppiare l'array delle chiavi esterne
+			String[] chiaviDiEquilibrioInterno = chiaviDiEquilibrio;
+			
+			for(String elementoInterno: chiaviDiEquilibrioInterno) {
 				
 				//caso dello stesso elemento => metto potenza a zero
 				if(elementoEsterno.equals(elementoInterno)) {
@@ -65,40 +80,46 @@ public class Equilibrio {
 					//la potenza che andrà tra i due elementi
 					int potenzaDaAggiungere = 0;
 
+					//ultima potenza, dipende dalle altre e non è casuale
 					if(numeroPotenzeAncoraDaEstrarre == 1) {
-						Set<String> equilibrioSenzaUltimoElemento = equilibrio.keySet();
-						equilibrioSenzaUltimoElemento.remove(elementoInterno);
-						for(String altriElementi: equilibrioSenzaUltimoElemento)
-							potenzaDaAggiungere += getPotenzaTraElementi(elementoEsterno,altriElementi);
-						potenzaDaAggiungere = (-potenzaDaAggiungere);
+						potenzaDaAggiungere = (-sommaPotenze);
 					}
 					//caso che gli elementi a cui voglio dare una potenza NON ne hanno una già assegnata
-					else if(equilibrio.get(elementoEsterno).get(elementoEsterno) == 0) {
+					else if(equilibrio.get(elementoInterno)
+							.get(elementoEsterno) == 0) {
 						//cicla finchè esce un numero non zero
 						//in base ad altri controlli non dovrebbe essere un ciclo infinito, forse
-						while(potenzaDaAggiungere != 0) {
+						while(potenzaDaAggiungere == 0) {
 							potenzaDaAggiungere = GeneratoreNumeriCasuali.estraiIntero
-									(minPotenza + numeroPotenzeAncoraDaEstrarre
-											, maxPotenza - numeroPotenzeAncoraDaEstrarre);
+									(-MAX_POTENZA_ESTRAIBILE, MAX_POTENZA_ESTRAIBILE);
 						}
 					} else //caso che gli elementi a cui vogli dare una potenza ne hanno già una
 					{
 						//la potenza dell'elemento interno(che, se sono in questo else, significa che
 						//ha gia' una potenza associata all'elemento) e' l'opposto di quello esterno
-						potenzaDaAggiungere = -equilibrio.get(elementoInterno).get(elementoEsterno);
+						potenzaDaAggiungere = -getPotenzaTraElementi(elementoInterno,elementoEsterno);
 					}
 
+					//quando sono alla penultima potenza so che non posso avere la somma delle potenze a
+					//zero in quanto ciò significherebbe l'obbligo di mettere l'ultima potenza a zero
+					//per avere la somma delle potenze finale nulla
+					// => se mi trovo in questo caso devo far in modo di avere una somma diversa
+					if(numeroPotenzeAncoraDaEstrarre == 2 && (sommaPotenze + potenzaDaAggiungere == 0)) {
+						if(potenzaDaAggiungere > 0) {
+							potenzaDaAggiungere ++;
+						} else {
+							potenzaDaAggiungere --;
+						}
+					}
+					
 					//aggiungo la potenza
 					equilibrio.get(elementoEsterno).put(elementoInterno, potenzaDaAggiungere);
-
-					//diminuisco gli estremi del range
-					if(potenzaDaAggiungere < 0)
-						minPotenza -= potenzaDaAggiungere;
-					else if(potenzaDaAggiungere > 0)
-						maxPotenza -= potenzaDaAggiungere;
+					
+					//aggiorno la somma delle potenze
+					sommaPotenze += potenzaDaAggiungere;
+					
+					numeroPotenzeAncoraDaEstrarre --;
 				}
-
-				numeroPotenzeAncoraDaEstrarre --;
 			}
 		}
 	}
@@ -122,30 +143,45 @@ public class Equilibrio {
 	}
 
 	public String toString() {
-		StringBuffer tabella = new StringBuffer(CINQUE_SPAZZI);
-
+		//info lettura della tabella
+		StringBuffer tabella = new StringBuffer(INFO_LETTURA_TABELLA);
+		
+		//aggiungo un po di spazio
+		tabella.append(A_CAPO);
+		tabella.append(A_CAPO);
+		
+		//la cella vuota in alto a sinistra della tabella
+		tabella.append(String.format(FORMAT_DELLA_STRING,SPAZIO));
+		
+		
 		tabella.append(DIVISORE_VERTICALE);
 		
 		//scrittura prima riga con i nomi degli elementi
-		for(String elemento: equilibrio.keySet()) {
-			tabella.append(elemento);
+		for(String elemento: chiaviDiEquilibrio) {
+			tabella.append(String.format(FORMAT_DELLA_STRING,elemento));
 			tabella.append(DIVISORE_VERTICALE);
 		}
 		
+		//prima riga di orizzontale
 		tabella.append(A_CAPO);
 		tabella.append(DIVISORE_ORIZZONTALE);
+		tabella.append(A_CAPO);
 		
-		for(String elementoEsterno: equilibrio.keySet()) {
+		for(String elementoEsterno: chiaviDiEquilibrio) {
 			//scrittura dei nomi sulla prima colonna
-			tabella.append(elementoEsterno);
+			tabella.append(String.format(FORMAT_DELLA_STRING,elementoEsterno));
 			tabella.append(DIVISORE_VERTICALE);
-			for(String elementoInterno: equilibrio.keySet()) {
+			//scrittura delle potenze
+			for(String elementoInterno: chiaviDiEquilibrio) {
 				//scrittura della potenza
-				tabella.append(equilibrio.get(elementoEsterno).get(elementoInterno));
+				tabella.append(
+						String.format(FORMAT_DELLA_STRING, equilibrio.get(elementoEsterno).get(elementoInterno)));
 				tabella.append(DIVISORE_VERTICALE);
 			}
+			//riga orizzontale
 			tabella.append(A_CAPO);
 			tabella.append(DIVISORE_ORIZZONTALE);
+			tabella.append(A_CAPO);
 		}
 
 		return tabella.toString();
