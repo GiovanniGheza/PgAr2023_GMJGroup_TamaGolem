@@ -1,27 +1,36 @@
 package main;
 
+import java.util.ArrayList;
+
 public class TamaGolem {
 	
-	private static final String PUNTI_DI_DOMANDA = "(???),";
-	private static final String PARENTESI_APERTA = "(", PARENTESI_CHIUSA = ")";
+	private static final String ELEMENTO_SCONOSCIUTO = "(???),";
+	private static final String PARENTESI_APERTA = "(", PARENTESI_CHIUSA = "),";
 	public static final int MAX_VITA = 30;
-	public static final int MAX_PIETRE_INSERITE = 3;
 	
+	
+	private static int maxPietreIngerite;
 	private int vita = MAX_VITA;
-	private Pietra pietre[] = new Pietra[MAX_PIETRE_INSERITE];
+	private Pietra pietre[] = new Pietra[maxPietreIngerite];
 	private int pietraDaUsare = 0;
 	private int numeroPietreMostrate = 0;
 	
-
-	TamaGolem(){
+	TamaGolem(int maxPietreIngerite){
 		vita = MAX_VITA;
-		pietre = new Pietra[MAX_PIETRE_INSERITE];
+		TamaGolem.maxPietreIngerite = maxPietreIngerite;
+		pietre = new Pietra[maxPietreIngerite];
 		pietraDaUsare = 0;
 		numeroPietreMostrate = 0;
 	}
 	
-	TamaGolem(Pietra pietre[]){
+	TamaGolem(Pietra pietre[], int maxPietreIngerite){
+		TamaGolem.maxPietreIngerite = maxPietreIngerite;
 		this.pietre = pietre;
+	}
+	
+	TamaGolem(ArrayList<Pietra> pietre, int maxPietreIngerite){
+		TamaGolem.maxPietreIngerite = maxPietreIngerite;
+		this.pietre = pietre.toArray(new Pietra[0]);
 	}
 	
 	//***
@@ -49,7 +58,7 @@ public class TamaGolem {
 	}
 
 	public static int getMAX_PIETRE_INSERITE() {
-		return MAX_PIETRE_INSERITE;
+		return maxPietreIngerite;
 	}
 
 	public Pietra[] getPietre() {
@@ -57,13 +66,13 @@ public class TamaGolem {
 	}
 	
 	public Pietra[] getPietreMostrate() {
-		Pietra[] pietreMostrate = new Pietra[MAX_PIETRE_INSERITE];
+		Pietra[] pietreMostrate = new Pietra[maxPietreIngerite];
 		
-		for(int i = 0; i < MAX_PIETRE_INSERITE; i++) {
+		for(int i = 0; i < maxPietreIngerite; i++) {
 			if(i < this.numeroPietreMostrate) {
 				pietreMostrate[i] = pietre[i];
 			} else {
-				pietreMostrate[i] = new Pietra(PUNTI_DI_DOMANDA);
+				pietreMostrate[i] = new Pietra(ELEMENTO_SCONOSCIUTO);
 			}
 		}
 		
@@ -73,15 +82,15 @@ public class TamaGolem {
 	public String getStringaPietreMostrate() {
 		StringBuffer pietreMostrate = new StringBuffer();
 		
-		for(int i = 0; i < MAX_PIETRE_INSERITE; i++) {
+		for(int i = 0; i < maxPietreIngerite; i++) {
 			if(i < this.numeroPietreMostrate) {
 				pietreMostrate.append(PARENTESI_APERTA + pietre[i].getElemento() + PARENTESI_CHIUSA);
 			} else {
-				pietreMostrate.append(PUNTI_DI_DOMANDA);
+				pietreMostrate.append(ELEMENTO_SCONOSCIUTO);
 			}
 		}
 		
-		return pietreMostrate.;
+		return pietreMostrate.deleteCharAt(pietreMostrate.length() - 1).toString();
 	}
 	
 	public int getPietraDaUsare() {
@@ -102,9 +111,9 @@ public class TamaGolem {
 	public String usaPietra() {
 		String elementoDellaPietra = pietre[pietraDaUsare].getElemento();
 		pietraDaUsare++;
-		if(numeroPietreMostrate < MAX_PIETRE_INSERITE)
+		if(numeroPietreMostrate < maxPietreIngerite)
 			numeroPietreMostrate++;
-		pietraDaUsare %= MAX_PIETRE_INSERITE;
+		pietraDaUsare %= maxPietreIngerite;
 		return elementoDellaPietra;
 	}
 	
@@ -120,11 +129,13 @@ public class TamaGolem {
 		if(tamagolem == null)
 			return false;
 		
-		for(int i = 0; i < MAX_PIETRE_INSERITE; i++) {
+		boolean usanoPietreUguali = true;
+		
+		for(int i = 0; i < maxPietreIngerite; i++) {
 			if(!this.usaPietra().equals(tamagolem.usaPietra()))
-				return false;
+				usanoPietreUguali = false;
 		}
 		
-		return true;
+		return usanoPietreUguali;
 	}
 }

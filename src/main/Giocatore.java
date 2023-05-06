@@ -53,6 +53,12 @@ public class Giocatore {
 	
 	//***
 	
+	public void removeTamagolem() {
+		tamaGolemInCampo = null;
+	}
+	
+	//***
+	
 	public int danneggiaTamagolem(int danno) {
 		return tamaGolemInCampo.danneggia(danno);
 	}
@@ -69,5 +75,9 @@ public class Giocatore {
 	
 	public boolean hannoPietreUgualiA(Giocatore altroGiocatore) {
 		return tamaGolemInCampo.usaLeStessePietre(altroGiocatore.getTamaGolemInCampo());
+	}
+	
+	public void forzaSconfitta() {
+		this.setTamaGolemRimanenti(0);
 	}
 }

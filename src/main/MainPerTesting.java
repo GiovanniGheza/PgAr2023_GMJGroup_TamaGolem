@@ -12,21 +12,23 @@ public class MainPerTesting {
 		
 		System.out.println(myPartita.eseguiSetUp());
 		
+		int pietreSceltaDaA[] = {0,3};
+		int pietreSceltaDaB[] = {0,2};
+		
 		System.out.println(myPartita.getStringaPietreDisponibili());
-		
-		int pietreSceltaDaA[] = {0,1,2,3,5,6,7};
-		
+		System.out.println(myPartita.generaTamaGolem("A", pietreSceltaDaA));
 		System.out.println(myPartita.getStringaPietreDisponibili());
-		
-		int pietreSceltaDaB[] = {0,1,2,3,5,6,7};
-		
-		System.out.println(myPartita.generaTamaGolem("A", pietreSceltaDaA)? "funziona": "non finziona");
-		System.out.println(myPartita.generaTamaGolem("B", pietreSceltaDaB)? "funziona": "non finziona");
-		
-		
+		System.out.println(myPartita.generaTamaGolem("B", pietreSceltaDaB));
 		
 		System.out.println(myPartita.getStringaStatoDelGioco());
-		//TODO: correggi il metodo che mi da le pietre utilizzate
+		
+		for(int i = 0; i < 10; i++) {
+			System.out.println(myPartita.eseguiTurno());
+		}
+		
+		myPartita.forzaSconfitta("A");
+		
+		System.out.println(myPartita.eseguiFinePartita());
 		
 		/*for(int i = 0; i < 5; i++) {
 			myEquilibrio.generaEquilibrio();

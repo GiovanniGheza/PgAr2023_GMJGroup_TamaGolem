@@ -13,7 +13,7 @@ public class Partita {
 	private static final String SEPARATORE = "------";
 	private static final String PIETRE_UTILIZZATE = "Pietre utilizzate: ";
 	private static final String A_CAPO = "\n";
-	private static final String HP_CON_UNA_PIETRA_DI = "HP con una pietra di ";
+	private static final String HP_CON_UNA_PIETRA_DI = "HP usando una pietra di ";
 	private static final String HA_FERITO_IL_TAMAGOLEM_NEMICO_DI = " ha ferito il tamagolem nemico di ";
 	private static final String HP_GOLEM = "HP del tamagolem ";
 	private static final String A = "A", B = "B";
@@ -22,13 +22,15 @@ public class Partita {
 	
 	//il numero di tamagolem con cui ogni giocatore inizia
 	private int maxTamagolemPerGiocatore;
+	//il numero di pietre che ogni tamagolem può mangiare
+	private int maxPietreIngerite;
 	//il numero delle pietre per singolo elemento nella scorta comune
 	private int pietrePerElemento;
 	//il numero delle pietre nella scorta comune
 	private int maxPietreNellaScorta;
 	
 	//numero del turno
-	private int turno = 1;
+	private int turno = 0;
 	
 	//i due giocatori
 	private Map<String, Giocatore> giocatori = new HashMap<>();
@@ -49,14 +51,18 @@ public class Partita {
 		
 		//presa dei numero di elementi
 		int numeroElementi = equilibrio.getNumeroElementi();
-		//calcolo delle pietre per elemento nella scorta comune
-		pietrePerElemento = (Math.floorDiv(numeroElementi + 1, 3) + 1) * 3;
-		//calcolo delle pietre totali nella scorta
-		maxPietreNellaScorta
-			= (Math.floorDiv(2 * maxTamagolemPerGiocatore * pietrePerElemento, numeroElementi) + 1) * numeroElementi;
+
+		//calcolo del numero di pietre che ogni tamagolem può mangiare
+		maxPietreIngerite = (Math.floorDiv(numeroElementi + 1, 3) + 1);
 		//calcolo dei tamagolem per giocatore
 		maxTamagolemPerGiocatore
-			= (Math.floorDiv((numeroElementi - 1)*(numeroElementi - 2), 2 * maxPietreNellaScorta) + 1);
+			= (Math.floorDiv((numeroElementi - 1)*(numeroElementi - 2), 2 * maxPietreIngerite) + 1);
+		//calcolo delle pietre totali nella scorta
+		maxPietreNellaScorta
+			= (Math.floorDiv(2 * maxTamagolemPerGiocatore * maxPietreIngerite, numeroElementi) + 1) * numeroElementi;
+		//calcolo del numero di pietre per elemento nella scorta comune
+		pietrePerElemento
+			= (Math.floorDiv(2 * maxTamagolemPerGiocatore * maxPietreIngerite, numeroElementi) + 1);
 		
 		//setto le pietre a disposizione
 		for(int i = 0; i < numeroElementi; i++)
@@ -94,21 +100,24 @@ public class Partita {
 			return false;
 		
 		//creazione del set di pietre da far ingoiare
-		Pietra pietreDaDareAlTamaGolem[] = new Pietra[TamaGolem.MAX_PIETRE_INSERITE];
-		for(int i = 0; i < pietreDaDareAlTamaGolem.length; i++) {
-			pietreDaDareAlTamaGolem[i] = pietreADisposizione.get(pietreScelte[i]);
-			pietreADisposizione.remove(pietreScelte[i]);
+		ArrayList<Pietra> pietreDaDareAlTamaGolem = new ArrayList<Pietra>();
+		for(int i = 0; i < maxPietreIngerite; i++) {
+			pietreDaDareAlTamaGolem.add(pietreADisposizione.get(pietreScelte[i]));
 		}
 		
-		//creazione del nuovo tamagolem
-		TamaGolem nuovoTamagolem = new TamaGolem(pietreDaDareAlTamaGolem);
+		pietreADisposizione.removeAll(pietreDaDareAlTamaGolem);
 		
-		//controlla se i due tamagolem usano le stesse pietre
-		if(nuovoTamagolem.usaLeStessePietre(giocatori.get((giocatore == A) ? A: B).getTamaGolemInCampo()))
-			return false;
+		//creazione del nuovo tamagolem
+		TamaGolem nuovoTamagolem = new TamaGolem(pietreDaDareAlTamaGolem, maxPietreIngerite);
 		
 		//do il tamagolem al giocatore
 		giocatori.get(giocatore).setTamaGolemInCampo(nuovoTamagolem);
+		
+		//controlla se i due tamagolem usano le stesse pietre
+		if(nuovoTamagolem.usaLeStessePietre(giocatori.get((giocatore == A) ? B: A).getTamaGolemInCampo())) {
+			giocatori.get(giocatore).removeTamagolem();
+			return false;
+		}
 		
 		//la costruzione è andata a buon fine :)
 		return true;
@@ -205,14 +214,6 @@ public class Partita {
 		return equilibrio.toString();
 	}
 	
-	public boolean checkFinePartita() {
-		return !giocatori.get(A).haAncoraTamaGolemVivi() || !giocatori.get(B).haAncoraTamaGolemVivi();
-	}
-	
-	public boolean checkTamagolemMorti() {
-		return giocatori.get(A).isTamaGolemVivo() || giocatori.get(B).isTamaGolemVivo();
-	}
-	
 	public String getStringaPietreDisponibili() {
 		StringBuffer listaPietre = new StringBuffer(LE_PIETRE_DISPONIBILI);
 		
@@ -246,5 +247,55 @@ public class Partita {
 		}
 		
 		return fraseStatoDelGioco.toString();
+	}
+	
+	
+	
+	/**
+	 * @return the maxTamagolemPerGiocatore
+	 */
+	public int getMaxTamagolemPerGiocatore() {
+		return maxTamagolemPerGiocatore;
+	}
+
+	/**
+	 * @return the maxPietreIngerite
+	 */
+	public int getMaxPietreIngerite() {
+		return maxPietreIngerite;
+	}
+
+	/**
+	 * @return the pietrePerElemento
+	 */
+	public int getPietrePerElemento() {
+		return pietrePerElemento;
+	}
+
+	/**
+	 * @return the maxPietreNellaScorta
+	 */
+	public int getMaxPietreNellaScorta() {
+		return maxPietreNellaScorta;
+	}
+
+	/**
+	 * @return the turno
+	 */
+	public int getTurno() {
+		return turno;
+	}
+
+	public boolean checkFinePartita() {
+		return !giocatori.get(A).haAncoraTamaGolemVivi() || !giocatori.get(B).haAncoraTamaGolemVivi();
+	}
+	
+	public boolean checkTamagolemMorti() {
+		return giocatori.get(A).isTamaGolemVivo() || giocatori.get(B).isTamaGolemVivo();
+	}
+	
+	public void forzaSconfitta(String giocatore) {
+		if(giocatore == A || giocatore == B)
+			giocatori.get(giocatore).forzaSconfitta();
 	}
 }
