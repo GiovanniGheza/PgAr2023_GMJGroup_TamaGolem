@@ -2,16 +2,10 @@ package main;
 
 public class Giocatore {
 
-	public static final int MAX_TAMAGOLEM = 6;
-
 	private String nome;
-	private int tamaGolemRimanenti = MAX_TAMAGOLEM;
+	private int tamaGolemRimanenti;
 
 	private TamaGolem tamaGolemInCampo;
-
-	Giocatore(){
-		
-	}
 
 	public Giocatore(String nome) {
 		this.nome = nome;
@@ -33,10 +27,6 @@ public class Giocatore {
 	
 	//***
 
-	public static int getMaxTamagolem() {
-		return MAX_TAMAGOLEM;
-	}
-
 	public String getNome() {
 		return nome;
 	}
@@ -49,16 +39,19 @@ public class Giocatore {
 		return tamaGolemInCampo;
 	}
 	
-	//***
-	
-	/**
-	 * 
-	 * @param danno - il danno subito dal tamagolem
-	 * @return vero se il tamagolem è ancora in vita
-	 */
-	public boolean subisceAttacco(int danno) {
-		return danneggiaTamagolem(danno) > 0;
+	public int getVitaTamagolem() {
+		return tamaGolemInCampo.getVita();
 	}
+	
+	public Pietra[] getPietreMostrateDalTamagolem() {
+		return tamaGolemInCampo.getPietreMostrate();
+	}
+	
+	public String getStringaPietreMostrate() {
+		return tamaGolemInCampo.getStringaPietreMostrate();
+	}
+	
+	//***
 	
 	public int danneggiaTamagolem(int danno) {
 		return tamaGolemInCampo.danneggia(danno);
@@ -70,5 +63,11 @@ public class Giocatore {
 	
 	public boolean haAncoraTamaGolemVivi() {
 		return tamaGolemRimanenti > 0;
+	}
+	
+	//***
+	
+	public boolean hannoPietreUgualiA(Giocatore altroGiocatore) {
+		return tamaGolemInCampo.usaLeStessePietre(altroGiocatore.getTamaGolemInCampo());
 	}
 }

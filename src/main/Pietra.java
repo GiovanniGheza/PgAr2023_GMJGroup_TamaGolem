@@ -15,4 +15,8 @@ public class Pietra {
 	public String getElemento() {
 		return elemento;
 	}
+	
+	public boolean equals(Pietra pietra) {
+		return this.elemento == pietra.getElemento();
+	}
 }
