@@ -6,7 +6,7 @@ public class TamaGolem {
 	
 	private static final String ELEMENTO_SCONOSCIUTO = "(???),";
 	private static final String PARENTESI_APERTA = "(", PARENTESI_CHIUSA = "),";
-	public static final int MAX_VITA = 30;
+	public static final int MAX_VITA = 20;
 	
 	
 	private static int maxPietreIngerite;

@@ -164,7 +164,7 @@ public class InputDatiGhz
 				for(int valoreNero: blackList) {
 					if(valoreLetto == valoreNero) {
 						valoreNonPresenteInBlackList = false;
-						System.out.println(ERRORE_VALORE_INVALIDO + minimo);
+						System.out.println(ERRORE_VALORE_INVALIDO);
 						break;
 					}
 				}
@@ -184,8 +184,10 @@ public class InputDatiGhz
 	{
 		int blackArray[] = new int[blackList.size()];
 		
-		for(int i = 0)
-		leggiIntero(messaggio, minimo, massimo, blackList.toArray(new Integer[0]));
+		for(int i = 0; i < blackList.size(); i++)
+			blackArray[i] = blackList.get(i);
+		
+		return leggiIntero(messaggio, minimo, massimo, blackArray);
 	}
 
 	public static double leggiDouble (String messaggio)

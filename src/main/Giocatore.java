@@ -71,6 +71,11 @@ public class Giocatore {
 		return tamaGolemRimanenti > 0;
 	}
 	
+	public void diminuisciTamagoleRimanenti() {
+		if(!isTamaGolemVivo())
+			tamaGolemRimanenti--;
+	}
+	
 	//***
 	
 	public boolean hannoPietreUgualiA(Giocatore altroGiocatore) {

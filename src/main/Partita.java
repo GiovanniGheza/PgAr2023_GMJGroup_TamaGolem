@@ -4,16 +4,18 @@ import java.util.*;
 
 public class Partita {
 	
-	private static final String LE_PIETRE_DISPONIBILI = "Le pietre disponibili:\n\n";
+	private static final String EQUILIBRIO_DELL_UNIERSO_ERA = "L'Equilibrio dell'unierso era:\n";
+	private static final String TITOLO_FINE_PARTITA = "\n-------\nFINE PARTITA!!!\n-------\n";
+	private static final String LE_PIETRE_DISPONIBILI = "Le pietre disponibili:\n";
 	private static final String CONTRO_UNA_PIETRA_DI = " contro una pietra di ";
 	private static final String TURNO = "Turno: ";
-	private static final String HA_PERSO = " ha perso";
+	private static final String HA_VINTO = " ha vinto!";
 	private static final String TAMAGOLEM_RIMANENTI = "Tamagolem rimanenti: ";
 	private static final String PARENTESI = ") ";
 	private static final String SEPARATORE = "------";
 	private static final String PIETRE_UTILIZZATE = "Pietre utilizzate: ";
 	private static final String A_CAPO = "\n";
-	private static final String HP_CON_UNA_PIETRA_DI = "HP usando una pietra di ";
+	private static final String HP_CON_UNA_PIETRA_DI = " HP usando una pietra di ";
 	private static final String HA_FERITO_IL_TAMAGOLEM_NEMICO_DI = " ha ferito il tamagolem nemico di ";
 	private static final String HP_GOLEM = "HP del tamagolem ";
 	private static final String A = "A", B = "B";
@@ -27,7 +29,7 @@ public class Partita {
 	//il numero delle pietre per singolo elemento nella scorta comune
 	private int pietrePerElemento;
 	//il numero delle pietre nella scorta comune
-	private int maxPietreNellaScorta;
+	private int numeroPietreNellaScorta;
 	
 	//numero del turno
 	private int turno = 0;
@@ -58,7 +60,7 @@ public class Partita {
 		maxTamagolemPerGiocatore
 			= (Math.floorDiv((numeroElementi - 1)*(numeroElementi - 2), 2 * maxPietreIngerite) + 1);
 		//calcolo delle pietre totali nella scorta
-		maxPietreNellaScorta
+		numeroPietreNellaScorta
 			= (Math.floorDiv(2 * maxTamagolemPerGiocatore * maxPietreIngerite, numeroElementi) + 1) * numeroElementi;
 		//calcolo del numero di pietre per elemento nella scorta comune
 		pietrePerElemento
@@ -105,8 +107,6 @@ public class Partita {
 			pietreDaDareAlTamaGolem.add(pietreADisposizione.get(pietreScelte[i]));
 		}
 		
-		pietreADisposizione.removeAll(pietreDaDareAlTamaGolem);
-		
 		//creazione del nuovo tamagolem
 		TamaGolem nuovoTamagolem = new TamaGolem(pietreDaDareAlTamaGolem, maxPietreIngerite);
 		
@@ -119,7 +119,11 @@ public class Partita {
 			return false;
 		}
 		
-		//la costruzione è andata a buon fine :)
+		//ora che sono sicuro che le pietre sono dentro il tamagolem le tolgo dalla lista
+		pietreADisposizione.removeAll(pietreDaDareAlTamaGolem);
+		//e ne diminuisco il numero
+		numeroPietreNellaScorta -= maxPietreIngerite;
+		//la costruzione e' andata a buon fine :)
 		return true;
 	}
 	
@@ -139,7 +143,7 @@ public class Partita {
 			giocatori.put(B, temporaneo);
 		}
 		
-		return FRASE_INIZIO_PARTE1 + giocatori.get(A).getNome() + FRASE_INIZIO_PARTE2;
+		return A_CAPO + FRASE_INIZIO_PARTE1 + giocatori.get(A).getNome() + FRASE_INIZIO_PARTE2;
 	}
 	
 	/**
@@ -154,17 +158,10 @@ public class Partita {
 		
 		//per dafault il danneggiante è il giocatoreA e il danneggiato B
 		String giocatoreDanneggiante = A, giocatoreDanneggiato = B;
-		String elementoUsatoDannegiante = giocatori.get(giocatoreDanneggiante).getTamaGolemInCampo().usaPietra();
+		String elementoUsatoDanneggiante = giocatori.get(giocatoreDanneggiante).getTamaGolemInCampo().usaPietra();
 		String elementoUsatoDanneggiato = giocatori.get(giocatoreDanneggiato).getTamaGolemInCampo().usaPietra();
 		
-		int potenzaDellAttacco = equilibrio.getPotenzaTraElementi(elementoUsatoDannegiante, elementoUsatoDanneggiato);
-		
-		if(potenzaDellAttacco == 0) {
-			//se ho la potenza d'attacco zero non dovrei fare niente ma il problema si presenta quando i due
-			//tamagolem hanno le stesse pietre sputate nello stesso ordine.
-			//Nel caso stessePietre-stessoOrdine andrei in un ciclo infinito
-			//TODO: fare qualcosa a riguardo
-		}
+		int potenzaDellAttacco = equilibrio.getPotenzaTraElementi(elementoUsatoDanneggiante, elementoUsatoDanneggiato);
 		
 		if(potenzaDellAttacco < 0) {
 			//se la potenza dell'attacco è minore di zero significa che
@@ -172,24 +169,23 @@ public class Partita {
 			giocatoreDanneggiante = B;
 			giocatoreDanneggiato = A;
 			//e devo scambiare le pietre utilizzate
-			String temporaneo = elementoUsatoDannegiante;
-			elementoUsatoDannegiante = elementoUsatoDanneggiato;
+			String temporaneo = elementoUsatoDanneggiante;
+			elementoUsatoDanneggiante = elementoUsatoDanneggiato;
 			elementoUsatoDanneggiato = temporaneo;
-		} else if(potenzaDellAttacco > 0){
+		} else{
 			//se la potenza dell'attacco è maggiore di zero significa che
 			//A danneggia B di potenzaDellAttacco danni
 			//questa è la situazione di defaul quindi nn faccio niente
-		} else {
 		}
 		
 		//ora che ho controllato chi attacca chi la potenza posso prenderla positiva
 		potenzaDellAttacco = Math.abs(potenzaDellAttacco);
-		giocatori.get(giocatoreDanneggiante).danneggiaTamagolem(potenzaDellAttacco);
-		fraseDiFineTurno.append(giocatori.get(giocatoreDanneggiato).getNome()
+		giocatori.get(giocatoreDanneggiato).danneggiaTamagolem(potenzaDellAttacco);
+		fraseDiFineTurno.append(giocatori.get(giocatoreDanneggiante).getNome()
 				+ HA_FERITO_IL_TAMAGOLEM_NEMICO_DI
 				+ potenzaDellAttacco
 				+ HP_CON_UNA_PIETRA_DI
-				+ elementoUsatoDannegiante
+				+ elementoUsatoDanneggiante
 				+ CONTRO_UNA_PIETRA_DI
 				+ elementoUsatoDanneggiato);
 		
@@ -200,14 +196,20 @@ public class Partita {
 	}
 	
 	public String eseguiFinePartita() {
+		StringBuffer fineDelGioco = new StringBuffer(TITOLO_FINE_PARTITA);
+		
 		if(checkFinePartita()) {
-			if(!giocatori.get(A).haAncoraTamaGolemVivi()) {
-				return giocatori.get(A).getNome() + HA_PERSO;
+			if(giocatori.get(A).haAncoraTamaGolemVivi()) {
+				fineDelGioco.append(giocatori.get(A).getNome() + HA_VINTO);
 			} else {
-				return giocatori.get(B).getNome() + HA_PERSO;
+				fineDelGioco.append(giocatori.get(B).getNome() + HA_VINTO);
 			}
 		}
-		return "";
+		
+		fineDelGioco.append(A_CAPO);
+		fineDelGioco.append(EQUILIBRIO_DELL_UNIERSO_ERA + getEquilibrioAsString());
+		
+		return fineDelGioco.toString();
 	}
 	
 	public String getEquilibrioAsString() {
@@ -215,7 +217,7 @@ public class Partita {
 	}
 	
 	public String getStringaPietreDisponibili() {
-		StringBuffer listaPietre = new StringBuffer(LE_PIETRE_DISPONIBILI);
+		StringBuffer listaPietre = new StringBuffer(A_CAPO + LE_PIETRE_DISPONIBILI);
 		
 		for(int i = 0; i < pietreADisposizione.size(); i++) {
 			listaPietre.append(i + PARENTESI + pietreADisposizione.get(i).getElemento() + A_CAPO);
@@ -239,7 +241,7 @@ public class Partita {
 			fraseStatoDelGioco.append(A_CAPO);
 			fraseStatoDelGioco.append(HP_GOLEM + giocatori.get(giocatore).getVitaTamagolem());
 			fraseStatoDelGioco.append(A_CAPO);
-			fraseStatoDelGioco.append(PIETRE_UTILIZZATE + giocatori.get(giocatore).getStringaPietreMostrate().toString());
+			fraseStatoDelGioco.append(PIETRE_UTILIZZATE + giocatori.get(giocatore).getStringaPietreMostrate());
 			
 			fraseStatoDelGioco.append(A_CAPO);
 			fraseStatoDelGioco.append(SEPARATORE);
@@ -275,8 +277,8 @@ public class Partita {
 	/**
 	 * @return the maxPietreNellaScorta
 	 */
-	public int getMaxPietreNellaScorta() {
-		return maxPietreNellaScorta;
+	public int getNumeroPietreNellaScorta() {
+		return numeroPietreNellaScorta;
 	}
 
 	/**
@@ -286,12 +288,31 @@ public class Partita {
 		return turno;
 	}
 
+	/**
+	 * @return the giocatori
+	 */
+	public Giocatore getGiocatore(String qualeGiocatore) {
+		if(qualeGiocatore == A || qualeGiocatore == B)
+			return giocatori.get(qualeGiocatore);
+		return null;
+	}
+	
+	public String getCodiceGiocatoreConTamagolemMorto() {
+		
+		if(!giocatori.get(A).isTamaGolemVivo())
+			return A;
+		else if(!giocatori.get(B).isTamaGolemVivo())
+			return B;
+		
+		return "";
+	}
+
 	public boolean checkFinePartita() {
 		return !giocatori.get(A).haAncoraTamaGolemVivi() || !giocatori.get(B).haAncoraTamaGolemVivi();
 	}
 	
 	public boolean checkTamagolemMorti() {
-		return giocatori.get(A).isTamaGolemVivo() || giocatori.get(B).isTamaGolemVivo();
+		return !giocatori.get(A).isTamaGolemVivo() || !giocatori.get(B).isTamaGolemVivo();
 	}
 	
 	public void forzaSconfitta(String giocatore) {
