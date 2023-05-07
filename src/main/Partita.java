@@ -4,6 +4,21 @@ import java.util.*;
 
 public class Partita {
 	
+	private static final String LORE = "Il delicato Equilibrio del Mondo si basa da sempre sull’interazione fra le diverse forze naturali, dalle più miti\r\n"
+			+ "alle più distruttive. Ogni elemento in natura ha i suoi punti forti e le sue debolezze, caratteristiche che\r\n"
+			+ "mantengono il nostro Universo stabile e sicuro.\r\n\n"
+			+ "Da migliaia di anni, L’Accademia studia le tecniche per governare tali elementi: utilizzando alcune pietre\r\n"
+			+ "particolari e dandole in pasto a strane creature denominate TamaGolem, infatti, è possibile conservare il\r\n"
+			+ "potere degli elementi per liberarlo al bisogno.\r\n\n"
+			+ "Gli allievi dell’Accademia, per questo motivo, sono soliti sfidarsi in combattimenti clandestini fra\r\n"
+			+ "TamaGolem. L’abilità dei combattenti, in questo caso, sta nella scelta delle giuste Pietre degli Elementi in\r\n"
+			+ "modo che lo scontro abbia il risultato sperato. Tale scelta non è scontata, poiché gli Equilibri del Mondo\r\n"
+			+ "sono mutevoli, e possono modificarsi radicalmente da una battaglia all’altra.\r\n";
+	private static final String VINCE_IL_GIOCATORE_CHE = "Vince il giocatore che riesce a sconfiggere tutti i tamagolem affersari.";
+	private static final String PIETRE = " pietre.";
+	private static final String TAMAGOLEM_OGNUNO_DEI_QUALI_PUÒ_INGOIARE = " tamagolem, ognuno dei quali può ingoiare ";
+	private static final String OGNI_GIOCATORE_HA_A_SUA_DISPOSIZIONE = "Ogni giocatore ha a sua disposizione ";
+	private static final String GLI_ELEMENTI_CHE_GOVERNANO_sONO = "Gli elementi che governano l'universo sono:";
 	private static final String EQUILIBRIO_DELL_UNIERSO_ERA = "L'Equilibrio dell'unierso era:\n";
 	private static final String TITOLO_FINE_PARTITA = "\n-------\nFINE PARTITA!!!\n-------\n";
 	private static final String LE_PIETRE_DISPONIBILI = "Le pietre disponibili:\n";
@@ -17,7 +32,7 @@ public class Partita {
 	private static final String A_CAPO = "\n";
 	private static final String HP_CON_UNA_PIETRA_DI = " HP usando una pietra di ";
 	private static final String HA_FERITO_IL_TAMAGOLEM_NEMICO_DI = " ha ferito il tamagolem nemico di ";
-	private static final String HP_GOLEM = "HP del tamagolem ";
+	private static final String HP_GOLEM = "HP del tamagolem: ";
 	private static final String A = "A", B = "B";
 	private static final String FRASE_INIZIO_PARTE1 = "Inizia il giocatore ";
 	private static final String FRASE_INIZIO_PARTE2 = " come giocatore A.";
@@ -207,20 +222,24 @@ public class Partita {
 		}
 		
 		fineDelGioco.append(A_CAPO);
-		fineDelGioco.append(EQUILIBRIO_DELL_UNIERSO_ERA + getEquilibrioAsString());
+		fineDelGioco.append(EQUILIBRIO_DELL_UNIERSO_ERA + getStringEquilibrio());
 		
 		return fineDelGioco.toString();
 	}
 	
-	public String getEquilibrioAsString() {
+	public String getStringEquilibrio() {
 		return equilibrio.toString();
 	}
 	
 	public String getStringaPietreDisponibili() {
 		StringBuffer listaPietre = new StringBuffer(A_CAPO + LE_PIETRE_DISPONIBILI);
+		String elementoPrecedente = "";
 		
 		for(int i = 0; i < pietreADisposizione.size(); i++) {
+			if(elementoPrecedente != pietreADisposizione.get(i).getElemento())
+				listaPietre.append(SEPARATORE + A_CAPO);
 			listaPietre.append(i + PARENTESI + pietreADisposizione.get(i).getElemento() + A_CAPO);
+			elementoPrecedente = pietreADisposizione.get(i).getElemento();
 		}
 		
 		return listaPietre.toString();
@@ -251,7 +270,32 @@ public class Partita {
 		return fraseStatoDelGioco.toString();
 	}
 	
-	
+	public String getStringaInfoGioco() {
+		StringBuffer info = new StringBuffer();
+		
+		info.append(LORE);
+		
+		info.append(A_CAPO + A_CAPO);
+		
+		info.append(GLI_ELEMENTI_CHE_GOVERNANO_sONO 
+				+ A_CAPO
+				+ equilibrio.getEementiDiEquilirioComeElenco()
+				+ A_CAPO
+				+ A_CAPO);
+		
+		info.append(OGNI_GIOCATORE_HA_A_SUA_DISPOSIZIONE
+				+ maxTamagolemPerGiocatore
+				+ TAMAGOLEM_OGNUNO_DEI_QUALI_PUÒ_INGOIARE
+				+ maxPietreIngerite
+				+ PIETRE
+				+ A_CAPO
+				+ A_CAPO);
+		
+		info.append(VINCE_IL_GIOCATORE_CHE
+				+ A_CAPO);
+		
+		return info.toString();
+	}
 	
 	/**
 	 * @return the maxTamagolemPerGiocatore

@@ -186,6 +186,15 @@ public class Equilibrio {
 	public String getElementiDiEquilibrio(int i) {
 		return elementiDiEquilibrio[i];
 	}
+	
+	public String getEementiDiEquilirioComeElenco() {
+		StringBuffer elencoElementi = new StringBuffer();
+		for(String elemento: getElementiDiEquilibrio()) {
+			elencoElementi.append(elemento + A_CAPO);
+		}
+		
+		return elencoElementi.toString();
+	}
 
 	public int getNumeroElementi() {
 		return numeroElementi;
@@ -219,11 +228,9 @@ public class Equilibrio {
 		for(int i = 0; i < (LUNGHEZZA_CASELLE + 1) * (numeroElementi + 1); i++)
 			divisoreOrizzontale.append(DIVISORE_ORIZZONTALE);
 		
-		//scrittura info lettura della tabella
-		StringBuffer tabella = new StringBuffer(INFO_LETTURA_TABELLA);
+		StringBuffer tabella = new StringBuffer();
 		
 		//aggiungo un po' di spazio
-		tabella.append(A_CAPO);
 		tabella.append(A_CAPO);
 		
 		//scrittura la cella vuota in alto a sinistra della tabella
@@ -257,6 +264,15 @@ public class Equilibrio {
 			tabella.append(divisoreOrizzontale);
 			tabella.append(A_CAPO);
 		}
+		
+		//aggiungo un po' di spazio
+		tabella.append(A_CAPO);
+		tabella.append(divisoreOrizzontale);
+		tabella.append(A_CAPO);
+		tabella.append(INFO_LETTURA_TABELLA);
+		tabella.append(A_CAPO);
+		tabella.append(divisoreOrizzontale);
+		tabella.append(A_CAPO);
 
 		return tabella.toString();
 	}
