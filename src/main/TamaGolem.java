@@ -100,7 +100,7 @@ public class TamaGolem {
 	//***
 	
 	public int danneggia(int danno) {
-		setVita(getVita() - Math.abs(danno));
+		setVita(Math.max(getVita() - Math.abs(danno), 0));
 		return getVita();
 	}
 	

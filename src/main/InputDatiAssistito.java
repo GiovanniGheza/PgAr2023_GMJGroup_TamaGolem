@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public abstract class InputDatiAssistito extends InputDatiGhz{
 	
+	//assiste l'inserimento del nome di un giocatore
 	public static String inputNome(String diChiIlNome, String nomeNonDisponibile) {
 		String nome = leggiStringa("Inserisci il nome del " + diChiIlNome);
 		while(nome.equals(nomeNonDisponibile)) {
@@ -16,6 +17,7 @@ public abstract class InputDatiAssistito extends InputDatiGhz{
 		return nome;
 	}
 	
+	//assiste l'input delle pietre da far inghiare al tamagolem
 	public static int[] inputPietreDaInserire(String nomeGiocatore, int maxPietreIngerite, int numeroPietreNellaScorta) {
 		
 		int pietreScelte[] = new int[maxPietreIngerite];

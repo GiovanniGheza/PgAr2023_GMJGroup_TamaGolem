@@ -8,11 +8,11 @@ public class MainTamagolem {
 	private static final String PRIMO_GIOCATORE = "primo giocatore: ";
 	private static final String B = "B";
 	private static final String A = "A";
-	static final String elementi[] = {"Cri", "Oliva", "Coral"};
+	static final String ELEMENTI[] = {"Trentino", "Oliva", "Corallo"};
 	
 	public static void main(String[] args) {
 		
-		Equilibrio myEquilibrio = new Equilibrio(elementi);
+		Equilibrio myEquilibrio = new Equilibrio(ELEMENTI);
 		
 		String nomeA = InputDatiAssistito.inputNome(PRIMO_GIOCATORE, ""),
 				nomeB = InputDatiAssistito.inputNome(SECONDO_GIOCATORE, nomeA);
@@ -21,6 +21,8 @@ public class MainTamagolem {
 		Giocatore giocatoreB = new Giocatore(nomeB);
 		
 		Partita myPartita = new Partita(giocatoreA, giocatoreB, myEquilibrio);
+		
+		System.out.println(myPartita.getStringaInfoGioco());
 		
 		//while del programma, continua finche' il giocatore non vuole pi� gocare
 		while(true) {

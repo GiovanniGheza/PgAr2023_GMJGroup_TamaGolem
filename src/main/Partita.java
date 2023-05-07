@@ -4,21 +4,13 @@ import java.util.*;
 
 public class Partita {
 	
-	private static final String LORE = "Il delicato Equilibrio del Mondo si basa da sempre sull’interazione fra le diverse forze naturali, dalle più miti\r\n"
-			+ "alle più distruttive. Ogni elemento in natura ha i suoi punti forti e le sue debolezze, caratteristiche che\r\n"
-			+ "mantengono il nostro Universo stabile e sicuro.\r\n\n"
-			+ "Da migliaia di anni, L’Accademia studia le tecniche per governare tali elementi: utilizzando alcune pietre\r\n"
-			+ "particolari e dandole in pasto a strane creature denominate TamaGolem, infatti, è possibile conservare il\r\n"
-			+ "potere degli elementi per liberarlo al bisogno.\r\n\n"
-			+ "Gli allievi dell’Accademia, per questo motivo, sono soliti sfidarsi in combattimenti clandestini fra\r\n"
-			+ "TamaGolem. L’abilità dei combattenti, in questo caso, sta nella scelta delle giuste Pietre degli Elementi in\r\n"
-			+ "modo che lo scontro abbia il risultato sperato. Tale scelta non è scontata, poiché gli Equilibri del Mondo\r\n"
-			+ "sono mutevoli, e possono modificarsi radicalmente da una battaglia all’altra.\r\n";
-	private static final String VINCE_IL_GIOCATORE_CHE = "Vince il giocatore che riesce a sconfiggere tutti i tamagolem affersari.";
+	//costanti varie per scrivere le stringhe nei metodi
+	private static final String FRASE_BENVENUTO = "\n-------\nBenvenuti ai Combattimenti tra Tamagolem!";
+	private static final String VINCE_IL_GIOCATORE_CHE = "Vince il giocatore che riesce a sconfiggere tutti i tamagolem avversari.";
 	private static final String PIETRE = " pietre.";
-	private static final String TAMAGOLEM_OGNUNO_DEI_QUALI_PUÒ_INGOIARE = " tamagolem, ognuno dei quali può ingoiare ";
+	private static final String TAMAGOLEM_OGNUNO_DEI_QUALI_PUO_INGOIARE = " tamagolem, ognuno dei quali puo' ingoiare ";
 	private static final String OGNI_GIOCATORE_HA_A_SUA_DISPOSIZIONE = "Ogni giocatore ha a sua disposizione ";
-	private static final String GLI_ELEMENTI_CHE_GOVERNANO_sONO = "Gli elementi che governano l'universo sono:";
+	private static final String GLI_ELEMENTI_CHE_GOVERNANO_SONO = "Gli elementi che governano l'universo sono:";
 	private static final String EQUILIBRIO_DELL_UNIERSO_ERA = "L'Equilibrio dell'unierso era:\n";
 	private static final String TITOLO_FINE_PARTITA = "\n-------\nFINE PARTITA!!!\n-------\n";
 	private static final String LE_PIETRE_DISPONIBILI = "Le pietre disponibili:\n";
@@ -41,10 +33,14 @@ public class Partita {
 	private int maxTamagolemPerGiocatore;
 	//il numero di pietre che ogni tamagolem può mangiare
 	private int maxPietreIngerite;
+	//il numero delle pietre che posso avere nlla scorta al massimo
+	private int maxNumeroPietreNellaScorta;
 	//il numero delle pietre per singolo elemento nella scorta comune
 	private int pietrePerElemento;
 	//il numero delle pietre nella scorta comune
 	private int numeroPietreNellaScorta;
+	//numero degli elementi nell'equilibrio
+	int numeroElementi;
 	
 	//numero del turno
 	private int turno = 0;
@@ -67,27 +63,25 @@ public class Partita {
 	public Partita(Giocatore giocatoreA, Giocatore giocatoreB, Equilibrio equilibrio) {
 		
 		//presa dei numero di elementi
-		int numeroElementi = equilibrio.getNumeroElementi();
+		numeroElementi = equilibrio.getNumeroElementi();
 
 		//calcolo del numero di pietre che ogni tamagolem può mangiare
 		maxPietreIngerite = (Math.floorDiv(numeroElementi + 1, 3) + 1);
 		//calcolo dei tamagolem per giocatore
 		maxTamagolemPerGiocatore
 			= (Math.floorDiv((numeroElementi - 1)*(numeroElementi - 2), 2 * maxPietreIngerite) + 1);
-		//calcolo delle pietre totali nella scorta
-		numeroPietreNellaScorta
+		//calolo del massimo numero di pietre nella scorta
+		maxNumeroPietreNellaScorta
 			= (Math.floorDiv(2 * maxTamagolemPerGiocatore * maxPietreIngerite, numeroElementi) + 1) * numeroElementi;
 		//calcolo del numero di pietre per elemento nella scorta comune
 		pietrePerElemento
 			= (Math.floorDiv(2 * maxTamagolemPerGiocatore * maxPietreIngerite, numeroElementi) + 1);
 		
-		//setto le pietre a disposizione
-		for(int i = 0; i < numeroElementi; i++)
-			for(int j = 0; j < pietrePerElemento; j++)
-				this.pietreADisposizione.add(new Pietra(equilibrio.getElementiDiEquilibrio(i)));
-		
 		//setto l'equilibrio
 		this.equilibrio = equilibrio;
+		
+		//setto le pietre a disposizione
+		resetScortaPietre();
 		
 		//setto il numero di tamagolem per giocatore
 		giocatoreA.setTamaGolemRimanenti(maxTamagolemPerGiocatore);
@@ -149,6 +143,10 @@ public class Partita {
 	public String eseguiSetUp() {
 		//generazione equilibrio
 		generaEquilibrio();
+		//riempio la sorta delle pietre
+		resetScortaPietre();
+		//tolgo resetto i giocatori
+		resetGiocatori();
 		
 		//scelta del giocatore iniziale
 		//tiro a caso un numero, se esce negativo inverto i due giocatori
@@ -162,16 +160,16 @@ public class Partita {
 	}
 	
 	/**
-	 * esegue il turno, attenzione: esegue solo la parte in cui i tamagolem combattono, non c'è il controllo sulla morte dei tamagolem ne la loro eventuale rigenerazione
-	 * @return la frase che descrive cosa è successo nel turno
+	 * esegue il turno, attenzione: esegue solo la parte in cui i tamagolem combattono, non c'e' il controllo sulla morte dei tamagolem ne la loro eventuale rigenerazione
+	 * @return la frase che descrive cosa e' successo nel turno
 	 */
 	public String eseguiTurno() {
 		//nuovo turno 
 		turno++;
-		//frase che mi dice cosa è accaduto in questo turno
+		//frase che mi dice cosa e' accaduto in questo turno
 		StringBuffer fraseDiFineTurno = new StringBuffer(TURNO + turno + A_CAPO + A_CAPO);
 		
-		//per dafault il danneggiante è il giocatoreA e il danneggiato B
+		//per dafault il danneggiante e' il giocatoreA e il danneggiato B
 		String giocatoreDanneggiante = A, giocatoreDanneggiato = B;
 		String elementoUsatoDanneggiante = giocatori.get(giocatoreDanneggiante).getTamaGolemInCampo().usaPietra();
 		String elementoUsatoDanneggiato = giocatori.get(giocatoreDanneggiato).getTamaGolemInCampo().usaPietra();
@@ -179,7 +177,7 @@ public class Partita {
 		int potenzaDellAttacco = equilibrio.getPotenzaTraElementi(elementoUsatoDanneggiante, elementoUsatoDanneggiato);
 		
 		if(potenzaDellAttacco < 0) {
-			//se la potenza dell'attacco è minore di zero significa che
+			//se la potenza dell'attacco e' minore di zero significa che
 			//B danneggia A del modulo di potenzaDellAttacco danni
 			giocatoreDanneggiante = B;
 			giocatoreDanneggiato = A;
@@ -188,7 +186,7 @@ public class Partita {
 			elementoUsatoDanneggiante = elementoUsatoDanneggiato;
 			elementoUsatoDanneggiato = temporaneo;
 		} else{
-			//se la potenza dell'attacco è maggiore di zero significa che
+			//se la potenza dell'attacco e' maggiore di zero significa che
 			//A danneggia B di potenzaDellAttacco danni
 			//questa è la situazione di defaul quindi nn faccio niente
 		}
@@ -210,6 +208,10 @@ public class Partita {
 		return fraseDiFineTurno.toString();
 	}
 	
+	/**
+	 * metodo che esegue il fine partita, ovvero crea una stringa che dice chi ha vinto e qual'era l'equilibrio dell'universo
+	 * @return la stringa di ine patita
+	 */
 	public String eseguiFinePartita() {
 		StringBuffer fineDelGioco = new StringBuffer(TITOLO_FINE_PARTITA);
 		
@@ -227,10 +229,18 @@ public class Partita {
 		return fineDelGioco.toString();
 	}
 	
+	/**
+	 * da a disposizione la tabella dell'equilibrio
+	 * @return la tabella che rappresenta l'equilibrio
+	 */
 	public String getStringEquilibrio() {
 		return equilibrio.toString();
 	}
 	
+	/**
+	 * metodo che da sottoforma di elenco le pietre presenti nella scorta
+	 * @return l'eleno elle pietre dispnibili
+	 */
 	public String getStringaPietreDisponibili() {
 		StringBuffer listaPietre = new StringBuffer(A_CAPO + LE_PIETRE_DISPONIBILI);
 		String elementoPrecedente = "";
@@ -245,6 +255,11 @@ public class Partita {
 		return listaPietre.toString();
 	}
 	
+	/**
+	 * metodo che da una stringa con le informazioni sullo stato del gioco, ovvero il turno in cui siamo, i nomi dei giocatori, i loro tamagolem rimanenti,
+	 * gli HP dei tamagolem in campo e le pietre utilizzate da ogni tamagolem
+	 * @return la string con lo stato del gioco
+	 */
 	public String getStringaStatoDelGioco() {
 		StringBuffer fraseStatoDelGioco = new StringBuffer(TURNO + turno);
 		
@@ -270,70 +285,78 @@ public class Partita {
 		return fraseStatoDelGioco.toString();
 	}
 	
+	/**
+	 * metrodo che da la stringa da stampare quando si avvia il programma, essa da il bevenuto ai giocatori, elenca gli elementi nell'universo, il numero di tamagolem per giocatore
+	 * e quante pietre sono ingerite da ogni tamagolem
+	 * @return la stringa con informazioni sul gioco
+	 */
 	public String getStringaInfoGioco() {
 		StringBuffer info = new StringBuffer();
 		
-		info.append(LORE);
+		info.append(A_CAPO);
 		
-		info.append(A_CAPO + A_CAPO);
+		info.append(FRASE_BENVENUTO);
 		
-		info.append(GLI_ELEMENTI_CHE_GOVERNANO_sONO 
+		info.append(A_CAPO);
+		info.append(A_CAPO);
+		
+		info.append(GLI_ELEMENTI_CHE_GOVERNANO_SONO 
 				+ A_CAPO
 				+ equilibrio.getEementiDiEquilirioComeElenco()
-				+ A_CAPO
 				+ A_CAPO);
 		
 		info.append(OGNI_GIOCATORE_HA_A_SUA_DISPOSIZIONE
 				+ maxTamagolemPerGiocatore
-				+ TAMAGOLEM_OGNUNO_DEI_QUALI_PUÒ_INGOIARE
+				+ TAMAGOLEM_OGNUNO_DEI_QUALI_PUO_INGOIARE
 				+ maxPietreIngerite
 				+ PIETRE
 				+ A_CAPO
 				+ A_CAPO);
 		
 		info.append(VINCE_IL_GIOCATORE_CHE
-				+ A_CAPO);
+				+ A_CAPO
+				+ SEPARATORE + SEPARATORE);
 		
 		return info.toString();
 	}
 	
 	/**
-	 * @return the maxTamagolemPerGiocatore
+	 * @return il massimo numero di Tamagolem Per Giocatore
 	 */
 	public int getMaxTamagolemPerGiocatore() {
 		return maxTamagolemPerGiocatore;
 	}
 
 	/**
-	 * @return the maxPietreIngerite
+	 * @return il massimo numero di Pietre Ingerite
 	 */
 	public int getMaxPietreIngerite() {
 		return maxPietreIngerite;
 	}
 
 	/**
-	 * @return the pietrePerElemento
+	 * @return le pietrePerElemento
 	 */
 	public int getPietrePerElemento() {
 		return pietrePerElemento;
 	}
 
 	/**
-	 * @return the maxPietreNellaScorta
+	 * @return il maxPietreNellaScorta
 	 */
 	public int getNumeroPietreNellaScorta() {
 		return numeroPietreNellaScorta;
 	}
 
 	/**
-	 * @return the turno
+	 * @return il turno
 	 */
 	public int getTurno() {
 		return turno;
 	}
 
 	/**
-	 * @return the giocatori
+	 * @return i giocatori
 	 */
 	public Giocatore getGiocatore(String qualeGiocatore) {
 		if(qualeGiocatore == A || qualeGiocatore == B)
@@ -341,6 +364,10 @@ public class Partita {
 		return null;
 	}
 	
+	/**
+	 * metodo per sapere a chi appartiene il tamagolem morto
+	 * @return il codice del giocatore cl tamagolem morto o una stringa vuota se ientrambi i tamagolem on vivi
+	 */
 	public String getCodiceGiocatoreConTamagolemMorto() {
 		
 		if(!giocatori.get(A).isTamaGolemVivo())
@@ -350,15 +377,51 @@ public class Partita {
 		
 		return "";
 	}
+	
+	/**
+	 * resetta la scorta delle pietre e il numero delle pietre rimanenti nella scorta
+	 */
+	public void resetScortaPietre() {
+		this.pietreADisposizione.clear();
+		//setto le pietre a disposizione
+		for(int i = 0; i < numeroElementi; i++)
+			for(int j = 0; j < pietrePerElemento; j++)
+				this.pietreADisposizione.add(new Pietra(equilibrio.getElementiDiEquilibrio(i)));
+		
+		//setto il numero delle pietre nella scorta 
+		numeroPietreNellaScorta = maxNumeroPietreNellaScorta;
+	}
+	
+	/**
+	 * resetta i giocatori ridandogli il numero massimo di tamagolem come tamagolem rimanenti e rimuovendo possibili tamagolem in campo
+	 */
+	public void resetGiocatori() {
+		giocatori.get(A).setTamaGolemRimanenti(maxTamagolemPerGiocatore);
+		giocatori.get(B).setTamaGolemRimanenti(maxTamagolemPerGiocatore);
+		giocatori.get(A).removeTamagolem();
+		giocatori.get(B).removeTamagolem();
+	}
 
+	/**
+	 * controlla se la partita e' finita, ovvero se uno dei due giocatori non ha pi� tamagolem in vita
+	 * @return vero se la partita deve finire, falso altrimenti
+	 */
 	public boolean checkFinePartita() {
 		return !giocatori.get(A).haAncoraTamaGolemVivi() || !giocatori.get(B).haAncoraTamaGolemVivi();
 	}
 	
+	/**
+	 * controlla se uno dei giocatori ha un tamagolem morto
+	 * @return vero se c'e' un tamaglem morto in campo
+	 */
 	public boolean checkTamagolemMorti() {
 		return !giocatori.get(A).isTamaGolemVivo() || !giocatori.get(B).isTamaGolemVivo();
 	}
 	
+	/**
+	 * metodo per debugging o cheattare, forza uno dei giocatori a perdere la partita
+	 * @param giocatore - il giocatore da far perdere
+	 */
 	public void forzaSconfitta(String giocatore) {
 		if(giocatore == A || giocatore == B)
 			giocatori.get(giocatore).forzaSconfitta();

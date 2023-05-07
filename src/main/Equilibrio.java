@@ -9,6 +9,8 @@ import java.util.*;
  */
 public class Equilibrio {
 
+	
+
 	//il massimo in modulo estraibile quando si genera una potenza
 	public static int MAX_POTENZA_ESTRAIBILE = 7;
 
@@ -20,8 +22,15 @@ public class Equilibrio {
 	public static String DIVISORE_VERTICALE = "|";
 	public static String A_CAPO = "\n";
 	public static String SPAZIO = " ";
-	public static int LUNGHEZZA_CASELLE = 6;
-	public static String FORMAT_DELLA_STRING = "%" + LUNGHEZZA_CASELLE + "s";
+	//costanti per il format della string
+	private static final String S = "s";
+	private static final String PERCENTUALE = "%";
+	
+	
+	//lunghezza caselle, deve essere uguale alla lunghezza del nome dell'elemento dal nome più lungo
+	public static int lunghezzaCaselle = 6;
+	//come le stringe devono essere formattate
+	public static String formatDellaCasella = PERCENTUALE + lunghezzaCaselle + S;
 	
 	//tabella che contiene le potenze degli elementi,
 	//la mappa interna rappresenta le righe della tabella
@@ -46,9 +55,16 @@ public class Equilibrio {
 	Equilibrio(String elementi[]){
 		//generazione riga
 		Map<String, Integer> colonnaEquilibrio = new HashMap<>();
+		
+		lunghezzaCaselle = elementi[0].length();
+		
 		for(String elemento: elementi) {
 			//inizialmente mette tutte le potenze a zero
 			colonnaEquilibrio.put(elemento, 0);
+			
+			//controllo quale è il nome dell'elemento più lungo
+			if(elemento.length() >= lunghezzaCaselle)
+				lunghezzaCaselle = elemento.length();
 		}
 
 		//riempimento colonne
@@ -57,6 +73,7 @@ public class Equilibrio {
 		}
 
 		
+		formatDellaCasella = PERCENTUALE + lunghezzaCaselle + S;
 		elementiDiEquilibrio = elementi;
 		numeroElementi = elementi.length;
 		numeroPotenzePerElemento = numeroElementi - 1;
@@ -190,7 +207,7 @@ public class Equilibrio {
 	public String getEementiDiEquilirioComeElenco() {
 		StringBuffer elencoElementi = new StringBuffer();
 		for(String elemento: getElementiDiEquilibrio()) {
-			elencoElementi.append(elemento + A_CAPO);
+			elencoElementi.append(DIVISORE_ORIZZONTALE + elemento + A_CAPO);
 		}
 		
 		return elencoElementi.toString();
@@ -225,7 +242,7 @@ public class Equilibrio {
 		//determinazione lunghezza divisore orizzontale
 		StringBuffer divisoreOrizzontale = new StringBuffer();
 		
-		for(int i = 0; i < (LUNGHEZZA_CASELLE + 1) * (numeroElementi + 1); i++)
+		for(int i = 0; i < (lunghezzaCaselle + 1) * (numeroElementi + 1); i++)
 			divisoreOrizzontale.append(DIVISORE_ORIZZONTALE);
 		
 		StringBuffer tabella = new StringBuffer();
@@ -234,12 +251,12 @@ public class Equilibrio {
 		tabella.append(A_CAPO);
 		
 		//scrittura la cella vuota in alto a sinistra della tabella
-		tabella.append(String.format(FORMAT_DELLA_STRING,SPAZIO));
+		tabella.append(String.format(formatDellaCasella,SPAZIO));
 		tabella.append(DIVISORE_VERTICALE);
 		
 		//scrittura prima riga con i nomi degli elementi
 		for(String elemento: elementiDiEquilibrio) {
-			tabella.append(String.format(FORMAT_DELLA_STRING,elemento));
+			tabella.append(String.format(formatDellaCasella,elemento));
 			tabella.append(DIVISORE_VERTICALE);
 		}
 		
@@ -250,13 +267,13 @@ public class Equilibrio {
 		
 		for(String elementoEsterno: elementiDiEquilibrio) {
 			//scrittura dei nomi sulla prima colonna
-			tabella.append(String.format(FORMAT_DELLA_STRING,elementoEsterno));
+			tabella.append(String.format(formatDellaCasella,elementoEsterno));
 			tabella.append(DIVISORE_VERTICALE);
 			//scrittura delle potenze
 			for(String elementoInterno: elementiDiEquilibrio) {
 				//scrittura della potenza
 				tabella.append(
-						String.format(FORMAT_DELLA_STRING, equilibrio.get(elementoEsterno).get(elementoInterno)));
+						String.format(formatDellaCasella, equilibrio.get(elementoEsterno).get(elementoInterno)));
 				tabella.append(DIVISORE_VERTICALE);
 			}
 			//scrittura riga orizzontale tra le righe degli elementi
