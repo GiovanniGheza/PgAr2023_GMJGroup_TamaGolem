@@ -2,22 +2,39 @@ package main;
 
 import java.util.ArrayList;
 
-//TODO: estrarre le costanti
-
 public abstract class InputDatiAssistito extends InputDatiGhz{
 	
-	//assiste l'inserimento del nome di un giocatore
+	private static final String DOMANDA_RIGIOCARE = "\nVolete rigiocare? ";
+	private static final String PIETRE_INGERIBILI = " pietre ingeribili)";
+	private static final String DEVE_INSERIRE_NUMERI_DELLE_PIETRE_DA_INGOIARE = " deve inserire i numeri delle pietre che vuole far ingoiare al tamagolem (Ancora ";
+	private static final String NOME_NON_DISPONIBILE_RENSERISCI_IL_NOME = "Nome non disponibile. Renserisci il nome.";
+	private static final String INSERISCI_IL_NOME_DEL = "Inserisci il nome del ";
+
+	/**
+	 * Assiste l'inserimento del nome di un giocatore
+	 * 
+	 * @param diChiIlNome - codice del giocatore
+	 * @param nomeNonDisponibile - il nome non disponibile, ovvero quello del primo giocatore
+	 * @return il nome del giocatore
+	 */
 	public static String inputNome(String diChiIlNome, String nomeNonDisponibile) {
-		String nome = leggiStringa("Inserisci il nome del " + diChiIlNome);
+		String nome = leggiStringa(INSERISCI_IL_NOME_DEL + diChiIlNome);
 		while(nome.equals(nomeNonDisponibile)) {
-			System.out.print("Nome non disponibile. Renserisci il nome.");
-			nome = leggiStringa("Inserisci il nome del " + diChiIlNome);
+			System.out.print(NOME_NON_DISPONIBILE_RENSERISCI_IL_NOME);
+			nome = leggiStringa(INSERISCI_IL_NOME_DEL + diChiIlNome);
 		}
 		
 		return nome;
 	}
 	
-	//assiste l'input delle pietre da far inghiare al tamagolem
+	/**
+	 * Assiste l'input delle pietre da far inghiare al tamagolem
+	 * 
+	 * @param nomeGiocatore - il nome del giocatore che vuole infilare le sue pietre nel tamagolem
+	 * @param maxPietreIngerite - il numero di pietre da ingerire
+	 * @param numeroPietreNellaScorta - il numero delle pietre rimanenti nella scorta
+	 * @return i numeri delle pietre nella scorta sottoforma di un array di int
+	 */
 	public static int[] inputPietreDaInserire(String nomeGiocatore, int maxPietreIngerite, int numeroPietreNellaScorta) {
 		
 		int pietreScelte[] = new int[maxPietreIngerite];
@@ -25,8 +42,8 @@ public abstract class InputDatiAssistito extends InputDatiGhz{
 		
 		for(int i = 0; i < maxPietreIngerite; i++) {
 			pietreScelte[i]
-					= leggiIntero(nomeGiocatore + " deve inserire i numeri delle pietre che vuole far ingoiare al tamagolem (Ancora "
-							+ (maxPietreIngerite - i) + " pietre ingeribili)", 0, numeroPietreNellaScorta - 1, pietreGiaInserite);
+					= leggiIntero(nomeGiocatore + DEVE_INSERIRE_NUMERI_DELLE_PIETRE_DA_INGOIARE
+							+ (maxPietreIngerite - i) + PIETRE_INGERIBILI, 0, numeroPietreNellaScorta - 1, pietreGiaInserite);
 			pietreGiaInserite.add(pietreScelte[i]);
 		}
 		
@@ -34,6 +51,6 @@ public abstract class InputDatiAssistito extends InputDatiGhz{
 	}
 	
 	public static boolean chiediDiGiocareDiNuovo() {
-		return yesOrNo("\nVolete rigiocare? ");
+		return yesOrNo(DOMANDA_RIGIOCARE);
 	}
 }

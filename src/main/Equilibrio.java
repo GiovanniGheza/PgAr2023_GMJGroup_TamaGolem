@@ -27,13 +27,14 @@ public class Equilibrio {
 	private static final String PERCENTUALE = "%";
 	
 	
-	//lunghezza caselle, deve essere uguale alla lunghezza del nome dell'elemento dal nome più lungo
-	public static int lunghezzaCaselle = 6;
+	//lunghezza caselle, deve essere uguale alla lunghezza del nome dell'elemento dal nome piu' lungo
+	//il valore di default e' 8
+	public static int lunghezzaCaselle = 8;
 	//come le stringe devono essere formattate
 	public static String formatDellaCasella = PERCENTUALE + lunghezzaCaselle + S;
 	
 	//tabella che contiene le potenze degli elementi,
-	//la mappa interna rappresenta le righe della tabella
+	//la mappa interna rappresenta le righe della tabella,
 	//la prima stringa da sinistra indica in che riga sono
 	//la seconda stringa indica invece la colonna
 	private Map<String, Map<String, Integer>> equilibrio = new HashMap<>();
@@ -62,7 +63,7 @@ public class Equilibrio {
 			//inizialmente mette tutte le potenze a zero
 			colonnaEquilibrio.put(elemento, 0);
 			
-			//controllo quale è il nome dell'elemento più lungo
+			//controllo quale ï¿½ il nome dell'elemento piï¿½ lungo
 			if(elemento.length() >= lunghezzaCaselle)
 				lunghezzaCaselle = elemento.length();
 		}
@@ -196,15 +197,26 @@ public class Equilibrio {
 		return Integer.MIN_VALUE;
 	}
 
+	/**
+	 * @return i nomi di tutti gli elementi
+	 */
 	public String[] getElementiDiEquilibrio() {
 		return elementiDiEquilibrio;
 	}
 	
-	public String getElementiDiEquilibrio(int i) {
+	/**
+	 * @param i - la posizione dell'elemento
+	 * @return il nome dell'eemento voluto
+	 */
+	public String getElementoDiEquilibrio(int i) {
 		return elementiDiEquilibrio[i];
 	}
 	
-	public String getEementiDiEquilirioComeElenco() {
+	/**
+	 * metodo che crea un elenco degli elementi dell'equilibrio
+	 * @return la string con gli elementi
+	 */
+	public String getEementiDiEquilibrioComeElenco() {
 		StringBuffer elencoElementi = new StringBuffer();
 		for(String elemento: getElementiDiEquilibrio()) {
 			elencoElementi.append(DIVISORE_ORIZZONTALE + elemento + A_CAPO);
@@ -220,19 +232,6 @@ public class Equilibrio {
 	public int getNumeroPotenzePerElemento() {
 		return numeroPotenzePerElemento;
 	}
-
-	/*public boolean checkPerZeriInposizioniSbagliate() {
-	for(String elementoEsterno: chiaviDiEquilibrio) {
-		for(String elementoInterno: chiaviDiEquilibrio) {
-			if(getPotenzaTraElementi(elementoEsterno,elementoInterno) == 0
-					&& !elementoEsterno.equals(elementoInterno)) return true;
-			if(getPotenzaTraElementi(elementoEsterno,elementoInterno) != 0
-					&& elementoEsterno.equals(elementoInterno)) return true;
-		}
-	}
-	
-	return false;
-}*/
 	
 	/**
 	 * overload del metodo toString

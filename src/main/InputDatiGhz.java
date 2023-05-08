@@ -1,5 +1,10 @@
 package main;
 import java.util.*;
+
+/**
+ * Classe di serina modificata
+ *
+ */
 public class InputDatiGhz
 {
 
@@ -151,6 +156,14 @@ public class InputDatiGhz
 		return valoreLetto;
 	}
 
+	/**
+	 * metodo che legge un valore in input con la condizione che sia nell'intervallo richiesto e non sia uno dei valori nella blacklist
+	 * @param messaggio - messaggio da stampare per dare info sull'input da dare
+	 * @param minimo - il minimo inseribile
+	 * @param massimo - il massimo inseribile
+	 * @param blackList - listra di valori che non possono essere inseriti
+	 * @return il valore letto
+	 */
 	public static int leggiIntero(String messaggio, int minimo, int massimo, int[] blackList)
 	{
 		boolean finito = false;
@@ -180,6 +193,14 @@ public class InputDatiGhz
 		return valoreLetto;
 	}
 
+	/**
+	 * metodo che legge un valore in input con la condizione che sia nell'intervallo richiesto e non sia uno dei valori nella blacklist
+	 * @param messaggio - messaggio da stampare per dare info sull'input da dare
+	 * @param minimo - il minimo inseribile
+	 * @param massimo - il massimo inseribile
+	 * @param blackList - listra di valori che non possono essere inseriti
+	 * @return il valore letto
+	 */
 	public static int leggiIntero(String messaggio, int minimo, int massimo, ArrayList<Integer> blackList)
 	{
 		int blackArray[] = new int[blackList.size()];

@@ -123,7 +123,7 @@ public class Partita {
 		giocatori.get(giocatore).setTamaGolemInCampo(nuovoTamagolem);
 		
 		//controlla se i due tamagolem usano le stesse pietre
-		if(nuovoTamagolem.usaLeStessePietre(giocatori.get((giocatore == A) ? B: A).getTamaGolemInCampo())) {
+		if(nuovoTamagolem.usaLeStessePietreDi(giocatori.get((giocatore == A) ? B: A).getTamaGolemInCampo())) {
 			giocatori.get(giocatore).removeTamagolem();
 			return false;
 		}
@@ -302,7 +302,7 @@ public class Partita {
 		
 		info.append(GLI_ELEMENTI_CHE_GOVERNANO_SONO 
 				+ A_CAPO
-				+ equilibrio.getEementiDiEquilirioComeElenco()
+				+ equilibrio.getEementiDiEquilibrioComeElenco()
 				+ A_CAPO);
 		
 		info.append(OGNI_GIOCATORE_HA_A_SUA_DISPOSIZIONE
@@ -356,11 +356,20 @@ public class Partita {
 	}
 
 	/**
-	 * @return i giocatori
+	 * @return il giocatore sottoforma di un oggetto Giocatore
 	 */
 	public Giocatore getGiocatore(String qualeGiocatore) {
 		if(qualeGiocatore == A || qualeGiocatore == B)
 			return giocatori.get(qualeGiocatore);
+		return null;
+	}
+	
+	/**
+	 * @return il nome del giocatore richiesto
+	 */
+	public String getNomeDi(String qualeGiocatore) {
+		if(qualeGiocatore == A || qualeGiocatore == B)
+			return giocatori.get(qualeGiocatore).getNome();
 		return null;
 	}
 	
@@ -386,7 +395,7 @@ public class Partita {
 		//setto le pietre a disposizione
 		for(int i = 0; i < numeroElementi; i++)
 			for(int j = 0; j < pietrePerElemento; j++)
-				this.pietreADisposizione.add(new Pietra(equilibrio.getElementiDiEquilibrio(i)));
+				this.pietreADisposizione.add(new Pietra(equilibrio.getElementoDiEquilibrio(i)));
 		
 		//setto il numero delle pietre nella scorta 
 		numeroPietreNellaScorta = maxNumeroPietreNellaScorta;
@@ -403,7 +412,7 @@ public class Partita {
 	}
 
 	/**
-	 * controlla se la partita e' finita, ovvero se uno dei due giocatori non ha più tamagolem in vita
+	 * controlla se la partita e' finita, ovvero se uno dei due giocatori non ha piï¿½ tamagolem in vita
 	 * @return vero se la partita deve finire, falso altrimenti
 	 */
 	public boolean checkFinePartita() {
@@ -416,6 +425,15 @@ public class Partita {
 	 */
 	public boolean checkTamagolemMorti() {
 		return !giocatori.get(A).isTamaGolemVivo() || !giocatori.get(B).isTamaGolemVivo();
+	}
+	
+	/**
+	 * diminuisce il numero di tamagolem rimanenti del giocatore specificato
+	 * @param giocatore
+	 */
+	public void diminuisciTamagoleRimanenti(String giocatore) {
+		if(giocatore == A || giocatore == B)
+			giocatori.get(giocatore).diminuisciTamagoleRimanenti();
 	}
 	
 	/**

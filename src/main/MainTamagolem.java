@@ -2,6 +2,9 @@ package main;
 
 public class MainTamagolem {
 
+	
+	//variabili stringa da stampare
+	private static final String STRINGA_VUOTA = "";
 	private static final String ATTEZIONE_SET_UGUALE = "ATTENZIONE: Non puoi usare un set di pietre identico a quello avversario, reinserisci.";
 	private static final String CIAO_CIAO = "\n\nCiao ciao :D";
 	private static final String SECONDO_GIOCATORE = "secondo giocatore: ";
@@ -12,23 +15,28 @@ public class MainTamagolem {
 	
 	public static void main(String[] args) {
 		
+		//costruisco l'equilibrio
 		Equilibrio myEquilibrio = new Equilibrio(ELEMENTI);
 		
-		String nomeA = InputDatiAssistito.inputNome(PRIMO_GIOCATORE, ""),
+		//chiedo i nomi dei giocatori
+		String nomeA = InputDatiAssistito.inputNome(PRIMO_GIOCATORE, STRINGA_VUOTA),
 				nomeB = InputDatiAssistito.inputNome(SECONDO_GIOCATORE, nomeA);
 		
+		//costruisco i giocatori
 		Giocatore giocatoreA = new Giocatore(nomeA);
 		Giocatore giocatoreB = new Giocatore(nomeB);
 		
+		//costruisco la partita
 		Partita myPartita = new Partita(giocatoreA, giocatoreB, myEquilibrio);
 		
+		//Do il benvenuto hai giocatori dando info sul gioco, i nomi degli elementi,
+		//il numero di golem e quante pietre ingoiano
 		System.out.println(myPartita.getStringaInfoGioco());
 		
-		//while del programma, continua finche' il giocatore non vuole pi� gocare
+		//while del programma, continua finche' il giocatore non vuole piu' gocare
 		while(true) {
+			//eseguo il setUp della partita e stampo la stringa che mi restituisce
 			System.out.println(myPartita.eseguiSetUp());
-			
-			//TODO: mettere un piccolo menu per decidere cosa fare
 			
 			//generazione primo tamagolem di A
 			parteGenerazioneGolem(myPartita, A);
@@ -47,7 +55,7 @@ public class MainTamagolem {
 					//perdo il giocatore con il tamagolem morto
 					String codiceGiocatoreConTamagolemMorto = myPartita.getCodiceGiocatoreConTamagolemMorto();
 					//diminuisco il numero di tamagolem nella sua squadra
-					myPartita.getGiocatore(codiceGiocatoreConTamagolemMorto).diminuisciTamagoleRimanenti();
+					myPartita.diminuisciTamagoleRimanenti(codiceGiocatoreConTamagolemMorto);
 					//stampo lo stato del gioco
 					System.out.println(myPartita.getStringaStatoDelGioco());
 					
@@ -56,7 +64,7 @@ public class MainTamagolem {
 						break;
 					}
 					
-					//generazione tamagolem
+					//rigenero il tamagolem morto
 					parteGenerazioneGolem(myPartita, codiceGiocatoreConTamagolemMorto);
 				}
 			}
@@ -77,8 +85,8 @@ public class MainTamagolem {
 	/**
 	 * metodo per generare il golem e controllare che non finisca in stallo con l'altro golem.
 	 * Se vi chiedete come mai questo metodo non si trovi nella classe InputDatiAssistito la motivazione sta nel
-	 * fatto che questo ritaglio di codice contiene sia metodi di InputDatiAssistito che Partita e 
-	 * il mio volere era di separare in modo netto gli input (classe InputDatiAssistito) dall'elaborazione dati (classe Partita)
+	 * fatto che questo ritaglio di codice contiene sia metodi di InputDatiAssistito che di Partita e 
+	 * io volevo separare in modo netto gli input (classe InputDatiAssistito) dall'elaborazione dati (classe Partita)
 	 * avendo il main come uico punto di contatto.
 	 * @param myPartita - la partita in corso
 	 * @param codiceGiocatore - il giocatore a cui devo dare il golem
@@ -88,7 +96,7 @@ public class MainTamagolem {
 		//stampo le pietre disponibili
 		System.out.println(myPartita.getStringaPietreDisponibili());
 		//prendo i numeri delle pietre ingerite
-		int pietreDaIngerire[] = InputDatiAssistito.inputPietreDaInserire(myPartita.getGiocatore(codiceGiocatore).getNome(), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
+		int pietreDaIngerire[] = InputDatiAssistito.inputPietreDaInserire(myPartita.getNomeDi(codiceGiocatore), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
 		
 		//se rischio di avere uno stallo tra golem riprendo le pietre da ingerire
 		while(!myPartita.generaTamaGolem(codiceGiocatore, pietreDaIngerire)) {
@@ -97,7 +105,7 @@ public class MainTamagolem {
 			//ristampo le pietre disponibili
 			System.out.println(myPartita.getStringaPietreDisponibili());
 			//riprendo i numeri delle pietre ingerite
-			pietreDaIngerire = InputDatiAssistito.inputPietreDaInserire(myPartita.getGiocatore(codiceGiocatore).getNome(), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
+			pietreDaIngerire = InputDatiAssistito.inputPietreDaInserire(myPartita.getNomeDi(codiceGiocatore), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
 		}
 	}
 }
