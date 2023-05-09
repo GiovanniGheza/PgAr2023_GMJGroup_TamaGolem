@@ -2,16 +2,17 @@ package main;
 
 public class MainTamagolem {
 
-	
-	//variabili stringa da stampare
+	//gli elementi del nostro universo
+	static final String ELEMENTI[] = {"Trentino", "Oliva", "Mango", "Zolfo", "Salnitro"};
+	//costanti stringa da stampare
 	private static final String STRINGA_VUOTA = "";
 	private static final String ATTEZIONE_SET_UGUALE = "ATTENZIONE: Non puoi usare un set di pietre identico a quello avversario, reinserisci.";
 	private static final String CIAO_CIAO = "\n\nCiao ciao :D";
 	private static final String SECONDO_GIOCATORE = "secondo giocatore: ";
 	private static final String PRIMO_GIOCATORE = "primo giocatore: ";
+	//costandi che indicano i giocatori
 	private static final String B = "B";
 	private static final String A = "A";
-	static final String ELEMENTI[] = {"Trentino", "Oliva", "Corallo"};
 	
 	public static void main(String[] args) {
 		
@@ -29,11 +30,11 @@ public class MainTamagolem {
 		//costruisco la partita
 		Partita myPartita = new Partita(giocatoreA, giocatoreB, myEquilibrio);
 		
-		//Do il benvenuto hai giocatori dando info sul gioco, i nomi degli elementi,
+		//Do il benvenuto ai giocatori dando info sul gioco, i nomi degli elementi,
 		//il numero di golem e quante pietre ingoiano
 		System.out.println(myPartita.getStringaInfoGioco());
 		
-		//while del programma, continua finche' il giocatore non vuole piu' gocare
+		//while del programma, continua finche' il giocatore non vuole piu' giocare
 		while(true) {
 			//eseguo il setUp della partita e stampo la stringa che mi restituisce
 			System.out.println(myPartita.eseguiSetUp());

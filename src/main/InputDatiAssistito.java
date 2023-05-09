@@ -2,6 +2,9 @@ package main;
 
 import java.util.ArrayList;
 
+/**
+ * Classe con i metodi per prendere in input il nome e quali pietre si vuole far ingerire al golem
+ */
 public abstract class InputDatiAssistito extends InputDatiGhz{
 	
 	private static final String DOMANDA_RIGIOCARE = "\nVolete rigiocare? ";

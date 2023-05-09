@@ -4,12 +4,8 @@ import java.util.*;
 
 /**
  * Questa classe rappresenta l'equilibrio dell'universo.
- * @author Giovanni Gheza
- *
  */
 public class Equilibrio {
-
-	
 
 	//il massimo in modulo estraibile quando si genera una potenza
 	public static int MAX_POTENZA_ESTRAIBILE = 7;

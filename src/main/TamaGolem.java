@@ -2,16 +2,20 @@ package main;
 
 import java.util.ArrayList;
 
+/**
+ * Questa classe rappresenta il tamagolem
+ */
 public class TamaGolem {
 	
 	//costanti per metodi che restituiscono stringhe
 	private static final String ELEMENTO_SCONOSCIUTO = "(???),";
 	private static final String PARENTESI_APERTA = "(", PARENTESI_CHIUSA = "),";
 	
-	//la vita massima del golem
+	//la vita massima del golem, scelta arbitraria
 	public static final int MAX_VITA = 15;
 	
-	//il numero massimo di pietre ingerite
+	//il numero massimo di pietre ingerite, non e' una costante perche' deve essere calcolata in base al numero
+	//di elementi nell'universo
 	private static int maxPietreIngerite;
 	//la vita del tamagolem
 	private int vita = MAX_VITA;
@@ -57,28 +61,49 @@ public class TamaGolem {
 	
 	//***
 	
+	/**
+	 * setter della vita
+	 * @param vita - la vita che si vuol far assumere al tamagolem
+	 */
 	public void setVita(int vita) {
 		this.vita = vita;
 	}
 	
+	/**
+	 * setta la pietra che il tamagolem deve usare per attaccare
+	 * @param pietraDaUsare - la posizione della pietra da usare
+	 */
 	public void setPietraDaUsare(int pietraDaUsare) {
 		this.pietraDaUsare = pietraDaUsare;
 	}
 	
+	/**
+	 * setta l'array delle pietre ingerite
+	 * @param pietre - il nuovo array di pietre
+	 */
 	public void setPietre(Pietra[] pietre) {
 		this.pietre = pietre;
 	}
 	
 	//***
 
+	/**
+	 * @return la vita rimanente al tamagolem
+	 */
 	public int getVita() {
 		return vita;
 	}
 
+	/**
+	 * @return il numero massimo di pietre che il golem puo' ingerire
+	 */
 	public static int getMaxPietreIngerite() {
 		return maxPietreIngerite;
 	}
 
+	/**
+	 * @return l'array delle pietre ingerite
+	 */
 	public Pietra[] getPietre() {
 		return pietre;
 	}
@@ -86,6 +111,7 @@ public class TamaGolem {
 	/**
 	 * metodo che ritorna una stringa con scritti gli elementi delle pietre con la particolarita di scrivere
 	 * l'elemento della pietra solo se e' gia' stata usata.
+	 * Ritorna solo le pietre utilizzate perche' se voglio mostrare quali pietre ha un giocatore
 	 * @return una stringa con gli elementi delle pietre usate fino al momento dell'invocazione
 	 */
 	public String getStringaPietreMostrate() {

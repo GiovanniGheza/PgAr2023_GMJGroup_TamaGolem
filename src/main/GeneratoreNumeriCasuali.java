@@ -2,6 +2,9 @@ package main;
 
 import java.util.Random;
 
+/**
+ * semplice generatore di numeri casuali, se non specificato il seme del random si usa l'orario
+ */
 public class GeneratoreNumeriCasuali {
 
 	private static Random estrattore = new Random(System.currentTimeMillis());

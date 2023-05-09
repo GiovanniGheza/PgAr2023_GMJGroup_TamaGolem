@@ -1,5 +1,8 @@
 package main;
 
+/**
+ * Questa classe rappresenta il giocatore
+ */
 public class Giocatore {
 
 	//nome del giocatore
@@ -87,7 +90,7 @@ public class Giocatore {
 	//***
 	
 	/**
-	 * rimuove il tamagolem in campo gettandolo tra le fiamme dell'Oblivion, ovvero settandolo a null
+	 * rimuove il tamagolem in campo gettandolo tra le fiamme dell'Oblivion, in altre parole lo setta a null
 	 */
 	public void removeTamagolem() {
 		tamaGolemInCampo = null;
@@ -119,7 +122,7 @@ public class Giocatore {
 	}
 	
 	/**
-	 * toglie uno dei tamagolem rimanenti se il tamagolem in campo e' vivo
+	 * toglie uno dei tamagolem rimanenti se il tamagolem in campo e' morto
 	 */
 	public void diminuisciTamagoleRimanenti() {
 		if(!isTamaGolemVivo())

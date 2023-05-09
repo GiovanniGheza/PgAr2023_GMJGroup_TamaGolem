@@ -2,6 +2,10 @@ package main;
 
 import java.util.*;
 
+/**
+ * Classe che rappresenta la partita che si svolge tra i due giocatori, dal main con essa si può mandare il gioco avanti
+ * e ottenere dati dalle classi Giocatore, Equilibrio e Tamagolem usando solo metodi della sottoscritta
+ */
 public class Partita {
 	
 	//costanti varie per scrivere le stringhe nei metodi
@@ -11,7 +15,7 @@ public class Partita {
 	private static final String TAMAGOLEM_OGNUNO_DEI_QUALI_PUO_INGOIARE = " tamagolem, ognuno dei quali puo' ingoiare ";
 	private static final String OGNI_GIOCATORE_HA_A_SUA_DISPOSIZIONE = "Ogni giocatore ha a sua disposizione ";
 	private static final String GLI_ELEMENTI_CHE_GOVERNANO_SONO = "Gli elementi che governano l'universo sono:";
-	private static final String EQUILIBRIO_DELL_UNIERSO_ERA = "L'Equilibrio dell'unierso era:\n";
+	private static final String EQUILIBRIO_DELL_UNIERSO_ERA = "L'Equilibrio dell'universo era:\n";
 	private static final String TITOLO_FINE_PARTITA = "\n-------\nFINE PARTITA!!!\n-------\n";
 	private static final String LE_PIETRE_DISPONIBILI = "Le pietre disponibili:\n";
 	private static final String CONTRO_UNA_PIETRA_DI = " contro una pietra di ";
@@ -201,6 +205,9 @@ public class Partita {
 				+ elementoUsatoDanneggiante
 				+ CONTRO_UNA_PIETRA_DI
 				+ elementoUsatoDanneggiato);
+		
+		fraseDiFineTurno.append("\nHP del tamagolem di " + giocatori.get(A).getNome() + ":" + giocatori.get(A).getVitaTamagolem()
+				+ "\n" + "HP del tamagolem di " + giocatori.get(B).getNome() + ":" + giocatori.get(B).getVitaTamagolem());
 		
 		fraseDiFineTurno.append(A_CAPO);
 		fraseDiFineTurno.append(SEPARATORE);
