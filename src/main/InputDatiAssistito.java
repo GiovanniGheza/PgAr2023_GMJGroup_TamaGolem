@@ -12,6 +12,7 @@ public abstract class InputDatiAssistito extends InputDatiGhz{
 	private static final String DEVE_INSERIRE_NUMERI_DELLE_PIETRE_DA_INGOIARE = " deve inserire i numeri delle pietre che vuole far ingoiare al tamagolem (Ancora ";
 	private static final String NOME_NON_DISPONIBILE_RENSERISCI_IL_NOME = "Nome non disponibile. Renserisci il nome.";
 	private static final String INSERISCI_IL_NOME_DEL = "Inserisci il nome del ";
+	private static final String ATTEZIONE_SET_UGUALE = "ATTENZIONE: Non puoi usare un set di pietre identico a quello avversario, reinserisci.";
 
 	/**
 	 * Assiste l'inserimento del nome di un giocatore
@@ -55,5 +56,28 @@ public abstract class InputDatiAssistito extends InputDatiGhz{
 	
 	public static boolean chiediDiGiocareDiNuovo() {
 		return yesOrNo(DOMANDA_RIGIOCARE);
+	}
+	
+	/**
+	 * metodo per generare il golem e controllare che non finisca in stallo con l'altro golem.
+	 * @param myPartita - la partita in corso
+	 * @param codiceGiocatore - il giocatore a cui devo dare il golem
+	 */
+	public static void parteGenerazioneGolem(Partita myPartita, String codiceGiocatore) {
+		//la partita non e' finita, quindi devo mandare in campo un nuovo tamagolem
+		//stampo le pietre disponibili
+		System.out.println(myPartita.getStringaPietreDisponibili());
+		//prendo i numeri delle pietre ingerite
+		int pietreDaIngerire[] = inputPietreDaInserire(myPartita.getNomeDi(codiceGiocatore), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
+		
+		//se rischio di avere uno stallo tra golem riprendo le pietre da ingerire
+		while(!myPartita.generaTamaGolem(codiceGiocatore, pietreDaIngerire)) {
+			//avverto dello stallo
+			System.out.println(ATTEZIONE_SET_UGUALE);
+			//ristampo le pietre disponibili
+			System.out.println(myPartita.getStringaPietreDisponibili());
+			//riprendo i numeri delle pietre ingerite
+			pietreDaIngerire = inputPietreDaInserire(myPartita.getNomeDi(codiceGiocatore), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
+		}
 	}
 }

@@ -9,6 +9,8 @@ import java.util.*;
 public class Partita {
 	
 	//costanti varie per scrivere le stringhe nei metodi
+	private static final String DUE_PUNTI = ":";
+	private static final String HP_DEL_TAMAGOLEM_DI = "\nHP del tamagolem di ";
 	private static final String FRASE_BENVENUTO = "\n-------\nBenvenuti ai Combattimenti tra Tamagolem!";
 	private static final String VINCE_IL_GIOCATORE_CHE = "Vince il giocatore che riesce a sconfiggere tutti i tamagolem avversari.";
 	private static final String PIETRE = " pietre.";
@@ -171,7 +173,8 @@ public class Partita {
 		//nuovo turno 
 		turno++;
 		//frase che mi dice cosa e' accaduto in questo turno
-		StringBuffer fraseDiFineTurno = new StringBuffer(TURNO + turno + A_CAPO + A_CAPO);
+		StringBuffer fraseDiFineTurno = new StringBuffer(SEPARATORE + A_CAPO 
+				+ TURNO + turno + A_CAPO + A_CAPO);
 		
 		//per dafault il danneggiante e' il giocatoreA e il danneggiato B
 		String giocatoreDanneggiante = A, giocatoreDanneggiato = B;
@@ -206,11 +209,11 @@ public class Partita {
 				+ CONTRO_UNA_PIETRA_DI
 				+ elementoUsatoDanneggiato);
 		
-		fraseDiFineTurno.append("\nHP del tamagolem di " + giocatori.get(A).getNome() + ":" + giocatori.get(A).getVitaTamagolem()
-				+ "\n" + "HP del tamagolem di " + giocatori.get(B).getNome() + ":" + giocatori.get(B).getVitaTamagolem());
+		fraseDiFineTurno.append(HP_DEL_TAMAGOLEM_DI + giocatori.get(A).getNome() + DUE_PUNTI + giocatori.get(A).getVitaTamagolem()
+				+ HP_DEL_TAMAGOLEM_DI + giocatori.get(B).getNome() + DUE_PUNTI + giocatori.get(B).getVitaTamagolem());
 		
 		fraseDiFineTurno.append(A_CAPO);
-		fraseDiFineTurno.append(SEPARATORE);
+		//fraseDiFineTurno.append(SEPARATORE);
 		
 		return fraseDiFineTurno.toString();
 	}
@@ -268,9 +271,11 @@ public class Partita {
 	 * @return la string con lo stato del gioco
 	 */
 	public String getStringaStatoDelGioco() {
-		StringBuffer fraseStatoDelGioco = new StringBuffer(TURNO + turno);
 		
-		fraseStatoDelGioco.append(A_CAPO);
+		StringBuffer fraseStatoDelGioco = new StringBuffer(A_CAPO + SEPARATORE);
+		
+		fraseStatoDelGioco.append(A_CAPO + TURNO + turno + A_CAPO);
+		fraseStatoDelGioco.append(SEPARATORE);
 		fraseStatoDelGioco.append(A_CAPO);
 		
 		String AB[] = {A,B};

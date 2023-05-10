@@ -6,7 +6,7 @@ public class MainTamagolem {
 	static final String ELEMENTI[] = {"Trentino", "Oliva", "Mango", "Zolfo", "Salnitro"};
 	//costanti stringa da stampare
 	private static final String STRINGA_VUOTA = "";
-	private static final String ATTEZIONE_SET_UGUALE = "ATTENZIONE: Non puoi usare un set di pietre identico a quello avversario, reinserisci.";
+	//private static final String ATTEZIONE_SET_UGUALE = "ATTENZIONE: Non puoi usare un set di pietre identico a quello avversario, reinserisci.";
 	private static final String CIAO_CIAO = "\n\nCiao ciao :D";
 	private static final String SECONDO_GIOCATORE = "secondo giocatore: ";
 	private static final String PRIMO_GIOCATORE = "primo giocatore: ";
@@ -40,10 +40,10 @@ public class MainTamagolem {
 			System.out.println(myPartita.eseguiSetUp());
 			
 			//generazione primo tamagolem di A
-			parteGenerazioneGolem(myPartita, A);
+			InputDatiAssistito.parteGenerazioneGolem(myPartita, A);
 
 			//generazione primo tamagolem di B
-			parteGenerazioneGolem(myPartita, B);
+			InputDatiAssistito.parteGenerazioneGolem(myPartita, B);
 			
 			//while dei turni, continua finche' un giocatore non perde
 			while(true) {
@@ -66,7 +66,7 @@ public class MainTamagolem {
 					}
 					
 					//rigenero il tamagolem morto
-					parteGenerazioneGolem(myPartita, codiceGiocatoreConTamagolemMorto);
+					InputDatiAssistito.parteGenerazioneGolem(myPartita, codiceGiocatoreConTamagolemMorto);
 				}
 			}
 			
@@ -81,32 +81,5 @@ public class MainTamagolem {
 		
 		//saluto i giocatori
 		System.out.println(CIAO_CIAO);
-	}
-	
-	/**
-	 * metodo per generare il golem e controllare che non finisca in stallo con l'altro golem.
-	 * Se vi chiedete come mai questo metodo non si trovi nella classe InputDatiAssistito la motivazione sta nel
-	 * fatto che questo ritaglio di codice contiene sia metodi di InputDatiAssistito che di Partita e 
-	 * io volevo separare in modo netto gli input (classe InputDatiAssistito) dall'elaborazione dati (classe Partita)
-	 * avendo il main come uico punto di contatto.
-	 * @param myPartita - la partita in corso
-	 * @param codiceGiocatore - il giocatore a cui devo dare il golem
-	 */
-	private static void parteGenerazioneGolem(Partita myPartita, String codiceGiocatore) {
-		//la partita non e' finita, quindi devo mandare in campo un nuovo tamagolem
-		//stampo le pietre disponibili
-		System.out.println(myPartita.getStringaPietreDisponibili());
-		//prendo i numeri delle pietre ingerite
-		int pietreDaIngerire[] = InputDatiAssistito.inputPietreDaInserire(myPartita.getNomeDi(codiceGiocatore), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
-		
-		//se rischio di avere uno stallo tra golem riprendo le pietre da ingerire
-		while(!myPartita.generaTamaGolem(codiceGiocatore, pietreDaIngerire)) {
-			//avverto dello stallo
-			System.out.println(ATTEZIONE_SET_UGUALE);
-			//ristampo le pietre disponibili
-			System.out.println(myPartita.getStringaPietreDisponibili());
-			//riprendo i numeri delle pietre ingerite
-			pietreDaIngerire = InputDatiAssistito.inputPietreDaInserire(myPartita.getNomeDi(codiceGiocatore), myPartita.getMaxPietreIngerite(), myPartita.getNumeroPietreNellaScorta());
-		}
 	}
 }
